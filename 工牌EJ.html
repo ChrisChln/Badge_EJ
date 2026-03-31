@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Badge Generator | Warehouse Operations</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- External Libraries for Badge Generator -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@latest/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-dim": "#3c5572",
+                        "secondary-fixed": "#d1e4ff",
+                        "on-secondary-fixed-variant": "#445d7b",
+                        "background": "#f8f9fa",
+                        "on-primary-fixed-variant": "#515c73",
+                        "on-surface": "#2b3437",
+                        "error": "#9f403d",
+                        "on-primary": "#f7f7ff",
+                        "primary-dim": "#48526a",
+                        "primary-container": "#d7e2ff",
+                        "tertiary": "#5e5c78",
+                        "on-tertiary": "#fcf7ff",
+                        "on-tertiary-fixed": "#35334d",
+                        "inverse-on-surface": "#9b9d9e",
+                        "surface-container-highest": "#dbe4e7",
+                        "on-primary-fixed": "#353f56",
+                        "on-error-container": "#752121",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#d7e2ff",
+                        "tertiary-container": "#d5d1f2",
+                        "on-tertiary-fixed-variant": "#52506b",
+                        "surface-bright": "#f8f9fa",
+                        "secondary": "#48617e",
+                        "on-secondary-fixed": "#27415d",
+                        "surface-container-high": "#e3e9ec",
+                        "inverse-surface": "#0c0f10",
+                        "outline": "#737c7f",
+                        "on-tertiary-container": "#484661",
+                        "outline-variant": "#abb3b7",
+                        "surface": "#f8f9fa",
+                        "surface-tint": "#545e76",
+                        "on-primary-container": "#475269",
+                        "tertiary-fixed": "#d5d1f2",
+                        "surface-container": "#eaeff1",
+                        "tertiary-fixed-dim": "#c7c3e3",
+                        "surface-container-low": "#f1f4f6",
+                        "tertiary-dim": "#52506b",
+                        "surface-variant": "#dbe4e7",
+                        "on-error": "#fff7f6",
+                        "primary": "#545e76",
+                        "error-dim": "#4e0309",
+                        "surface-dim": "#d1dce0",
+                        "primary-fixed": "#d7e2ff",
+                        "on-surface-variant": "#586064",
+                        "secondary-fixed-dim": "#bdd7f9",
+                        "on-background": "#2b3437",
+                        "on-secondary-container": "#3a5470",
+                        "error-container": "#fe8983",
+                        "secondary-container": "#d1e4ff",
+                        "on-secondary": "#f7f9ff",
+                        "primary-fixed-dim": "#c9d4f0"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .badge-grid { grid-template-columns: 320px 1fr 340px; }
+        .ledger-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .ledger-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .ledger-scrollbar::-webkit-scrollbar-thumb { background: #dbe4e7; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-screen flex flex-col overflow-hidden">
+<!-- TopNavBar (Shared Component Execution) -->
+<header class="w-full top-0 sticky flex justify-between items-center px-6 h-14 w-full bg-[#f1f4f6] dark:bg-slate-800 z-50">
+<div class="flex items-center gap-8">
+<span class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Badge Generator</span>
+<nav class="hidden md:flex items-center gap-6 font-['Inter'] antialiased text-sm font-medium tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Import Excel</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Load Sample</a>
+<a class="text-slate-900 dark:text-white border-b-2 border-[#545e76] pb-1 active:scale-95 transition-transform" href="#">Print</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:text-slate-700 transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-1 grid badge-grid overflow-hidden bg-surface">
+<!-- Left Panel: Configuration -->
+<aside class="bg-surface-container-low border-r border-outline-variant/10 flex flex-col overflow-y-auto p-5 space-y-8 ledger-scrollbar">
+<section>
+<h3 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-widest mb-4">Data Source</h3>
+<div class="bg-surface-container-lowest border border-outline-variant/20 p-4 flex flex-col items-center justify-center border-dashed rounded-sm cursor-pointer hover:bg-surface-container-low transition-colors" id="upload-area">
+<input type="file" id="file-input" accept=".xlsx,.xls,.csv" class="hidden"/>
+<span class="material-symbols-outlined text-outline mb-2" data-icon="upload_file">upload_file</span>
+<span class="text-xs font-medium text-primary">Upload Excel File</span>
+<span class="text-[10px] text-outline mt-1">.xlsx or .csv supported</span>
+<span class="text-[9px] text-outline-variant mt-2 text-center" id="upload-status"></span>
+</div>
+<button id="download-template" class="mt-2 w-full h-8 text-[11px] font-semibold text-primary border border-outline-variant/20 bg-surface-container-lowest rounded-sm hover:bg-surface-container-low transition-colors" type="button">
+Download Import Template
+</button>
+</section>
+<section>
+<h3 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-widest mb-4">New Employees</h3>
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-sm p-3">
+<p class="text-[10px] text-outline-variant uppercase">新增人数</p>
+<p id="new-employee-count" class="text-lg font-bold text-primary leading-tight">0</p>
+</div>
+</section>
+<section>
+<h3 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-widest mb-4">Print Setup</h3>
+<div class="grid grid-cols-2 gap-3">
+<button id="orientation-landscape" class="flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="landscape">landscape</span>
+<span class="text-[10px] mt-1">Landscape</span>
+</button>
+<button id="orientation-portrait" class="flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="portrait">portrait</span>
+<span class="text-[10px] mt-1">Portrait</span>
+</button>
+</div>
+<div class="mt-4 flex flex-col gap-1">
+<label class="text-[11px] font-medium text-outline-variant uppercase">Print Size</label>
+<select id="paper-size" class="text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm h-8">
+<option value="a4">A4 Standard (210x297mm)</option>
+<option value="letter" selected>US Letter</option>
+</select>
+</div>
+</section>
+</aside>
+<!-- Center Panel: Badge Preview -->
+<section class="bg-surface-container-lowest p-10 flex flex-col items-center justify-center border-r border-outline-variant/10">
+<div class="w-full max-w-2xl aspect-[3.375/2.125] bg-white border border-outline-variant/30 flex shadow-sm relative overflow-hidden">
+<!-- Left Accent -->
+<div class="w-4 bg-primary h-full"></div>
+<div class="flex-1 flex flex-col p-6">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="text-[0.6875rem] font-bold text-primary tracking-widest uppercase">Global Logistics Systems</h2>
+<p class="text-[10px] text-outline font-medium">Internal Operations Hub</p>
+</div>
+<div class="bg-surface-container-low px-2 py-1 rounded-sm text-[10px] font-bold text-on-surface-variant border border-outline-variant/10">
+                            SECURE ACCESS
+                        </div>
+</div>
+<div class="flex gap-6 items-center flex-1">
+<div class="w-32 h-40 bg-surface-container bg-cover bg-center border border-outline-variant/20" data-alt="professional portrait of a warehouse supervisor wearing a high-visibility vest and looking directly at the camera with a neutral expression" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWfaZ0_E6NusxTOgtZyqLCqkFsIK7cveHb421MIQjy-sMWacqMnpz27lvaTNvibJBGIAfwsWYEx01VSx7UexjKIx3JvMSbk7AzdnuE60jf7BFoBWRR3xjpFAa5nlZSDxwJkuuHG3HZwS7MCEfTd0eZsMJSB3-IEXMkqpkux9bZtba0Cq6tPhRTu6HlEfm8_vDrcljR3WdGXh5Eiyay8ioHxwaQsZn0glU8KUgxq0L_RxghwopEB2jEFAeYbEylJXiBj6x254XBwVUp')">
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold">Employee Name</span>
+<h1 class="text-2xl font-bold text-on-surface mb-4 leading-none">MARCUS VANCE</h1>
+<div class="grid grid-cols-2 gap-y-3 gap-x-8">
+<div>
+<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">ID Number</span>
+<span class="text-sm font-mono font-bold text-on-surface">GLS-99420-TX</span>
+</div>
+<div>
+<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">Position</span>
+<span class="text-sm font-medium text-on-surface">Floor Supervisor</span>
+</div>
+<div>
+<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">Exp. Date</span>
+<span class="text-sm font-medium text-on-surface">12 / 2026</span>
+</div>
+<div>
+<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">Clearance</span>
+<span class="text-sm font-bold text-on-surface">LEVEL 4</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto flex justify-between items-end">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="inventory">inventory</span>
+<span class="text-[9px] font-bold text-outline-variant uppercase tracking-widest">Asset Management Division</span>
+</div>
+<div class="w-16 h-16 bg-white p-1 border border-outline-variant/20">
+<img alt="QR Code" class="w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzQlBzqJG5BQGXAaAEgoA9dmyA43L6oU-yFrM32xLBfaF4YkUVkcjJ9nW49jueb4z-BJIcLZDC-AlX2oFoaLsQs64InoqEYU4zkXPJD6TcZd-gWUDdfRMBMXvD8FTAlVdWjkMWrJ3LjIqb-7N9HWvEYFaewPMAs1Y8zoM-DgDVAHAdhl6_B71BQmy560lMSvwEEXQxihGsyBlEeY2spB19fvjmz2uYjHZZB76cMgQMx-zKG__ny3ktN4wP51cwiRe_wbrHg3VA3wB"/>
+</div>
+</div>
+</div>
+<!-- Footer Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-secondary-dim"></div>
+</div>
+<p class="mt-8 text-[11px] text-outline italic">Actual badge dimensions: 85.60 mm x 53.98 mm (ISO/IEC 7810 ID-1)</p>
+</section>
+<!-- Right Panel: Employee Data -->
+<aside class="bg-surface-container-low flex flex-col overflow-hidden">
+<div class="p-4 border-b border-outline-variant/10">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-2 text-outline text-lg" data-icon="search">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm focus:ring-primary" placeholder="Search employees..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto ledger-scrollbar">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 sticky top-0 z-10">
+<th class="text-left py-2 px-4 text-[10px] font-bold text-outline-variant uppercase tracking-widest">Employee</th>
+<th class="text-left py-2 px-4 text-[10px] font-bold text-outline-variant uppercase tracking-widest">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="bg-primary/5 cursor-pointer">
+<td class="py-3 px-4">
+<p class="text-xs font-bold text-on-surface">Marcus Vance</p>
+<p class="text-[10px] text-outline font-mono">ID: 99420</p>
+</td>
+<td class="py-3 px-4">
+<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest cursor-pointer">
+<td class="py-3 px-4">
+<p class="text-xs font-bold text-on-surface">Elena Rodriguez</p>
+<p class="text-[10px] text-outline font-mono">ID: 99421</p>
+</td>
+<td class="py-3 px-4">
+<span class="bg-surface-container-highest text-outline text-[9px] px-1.5 py-0.5 font-bold uppercase">Pending</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest cursor-pointer">
+<td class="py-3 px-4">
+<p class="text-xs font-bold text-on-surface">Chen Wei</p>
+<p class="text-[10px] text-outline font-mono">ID: 99422</p>
+</td>
+<td class="py-3 px-4">
+<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest cursor-pointer">
+<td class="py-3 px-4">
+<p class="text-xs font-bold text-on-surface">Sarah Jenkins</p>
+<p class="text-[10px] text-outline font-mono">ID: 99423</p>
+</td>
+<td class="py-3 px-4">
+<span class="bg-error-container/20 text-error text-[9px] px-1.5 py-0.5 font-bold">ERROR</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest cursor-pointer">
+<td class="py-3 px-4">
+<p class="text-xs font-bold text-on-surface">David Miller</p>
+<p class="text-[10px] text-outline font-mono">ID: 99424</p>
+</td>
+<td class="py-3 px-4">
+<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Selected Detail -->
+<div class="h-40 bg-surface-container-high p-4 border-t border-outline-variant/20">
+<h3 class="text-[10px] font-bold text-outline-variant uppercase tracking-widest mb-3">Selected Details</h3>
+<div class="flex gap-4">
+<div class="w-16 h-16 bg-surface-container-lowest border border-outline-variant/20 flex-shrink-0 bg-cover" data-alt="thumbnail portrait of warehouse worker" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXuw6dRaB5lMdaLx2ItgJ5Fi-F0FDgBWyOI_lGEgs_fs7up3wP3uJgHfpe1L_zG5mxXKAzp7OblprZAhMqro5Gsvd9sv6YS19cThHrGSajBPSRZHOgGsgzjCsg4Nmre_WspWt7zvLJD-vv1Vf_bvRw4Kl881_GOt7cOUMthM23Zk1XY2CVITBNvJfMuRSq-u3XcdkjKoQQ8zER3L1Fb7F18I6TvXivyjUTShaRXobCJv-rlcu2UijKgu5jyjmENdPwVG-RJ0wVVpHq')"></div>
+<div class="space-y-1">
+<p class="text-xs font-bold">Marcus Vance</p>
+<p class="text-[10px] text-on-surface-variant">Zone: A-North Dock</p>
+<p class="text-[10px] text-on-surface-variant">Shift: 06:00 - 14:00</p>
+<button class="mt-2 text-[10px] font-bold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="edit">edit</span>
+                            EDIT DATA
+                        </button>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- Bottom Section: Batch Print Preview -->
+<footer class="h-44 bg-surface-container-high border-t border-outline-variant/10 flex flex-col p-4">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-[10px] font-bold text-outline-variant uppercase tracking-widest">Batch Print Preview (10 Badges Selected)</h3>
+<div class="flex items-center gap-4 text-[10px] font-medium text-outline-variant">
+<span>Zoom: 25%</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs" data-icon="print">print</span> A4 Output</span>
+</div>
+</div>
+<div class="flex-1 flex gap-6 overflow-x-auto pb-2 ledger-scrollbar">
+<!-- Page 1 Preview -->
+<div class="flex flex-col items-center gap-1 shrink-0">
+<div class="w-28 h-40 bg-white shadow-sm border border-outline-variant/30 p-1 grid grid-cols-2 grid-rows-4 gap-1">
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+</div>
+<span class="text-[9px] font-bold text-primary">Page 1</span>
+</div>
+<!-- Page 2 Preview -->
+<div class="flex flex-col items-center gap-1 shrink-0">
+<div class="w-28 h-40 bg-white shadow-sm border border-outline-variant/30 p-1 grid grid-cols-2 grid-rows-4 gap-1 opacity-60">
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-primary/20 border border-primary/10"></div>
+<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
+<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
+<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
+<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
+<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
+<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
+</div>
+<span class="text-[9px] font-bold text-outline-variant">Page 2</span>
+</div>
+</div>
+</footer>
+
+<!-- ==================== CORE APPLICATION MODULES ==================== -->
+
+<!-- Module 1: Data Manager -->
+<script>
+const dataManager = (() => {
+  let employeeData = [];
+
+  return {
+    getData() {
+      return employeeData;
+    },
+    setData(data) {
+      if (Array.isArray(data)) {
+        employeeData = data.map((item, index) => ({
+          ...item,
+          _index: index
+        }));
+      }
+    },
+    getEmployee(index) {
+      return employeeData[index] || null;
+    },
+    getFilteredData(searchTerm) {
+      if (!searchTerm) return employeeData;
+      const term = searchTerm.toLowerCase();
+      return employeeData.filter(emp => 
+        Object.values(emp).some(val => 
+          val && val.toString().toLowerCase().includes(term)
+        )
+      );
+    },
+    getCount() {
+      return employeeData.length;
+    },
+    clear() {
+      employeeData = [];
+    }
+  };
+})();
+</script>
+
+<!-- Module 2: Excel Parser -->
+<script>
+const excelParser = (() => {
+  return {
+    async parseFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            
+            // Convert to JSON with headers in first row
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            const headers = Object.keys(jsonData[0] || {});
+            
+            resolve({
+              success: true,
+              data: jsonData,
+              headers: headers,
+              rowCount: jsonData.length
+            });
+          } catch (error) {
+            reject({
+              success: false,
+              error: error.message
+            });
+          }
+        };
+        
+        reader.onerror = () => {
+          reject({
+            success: false,
+            error: 'Failed to read file'
+          });
+        };
+        
+        reader.readAsArrayBuffer(file);
+      });
+    }
+  };
+})();
+</script>
+
+<!-- Module 3: Field Mapper -->
+<script>
+const fieldMapper = (() => {
+  // Field name patterns for fuzzy matching
+  const fieldPatterns = {
+    name: ['name', '名字', 'full_name', 'fullname', 'employee_name', 'employeename', '姓名'],
+    employeeId: ['id', 'employee_id', 'employeeid', 'emp_id', 'empid', '工号', 'number'],
+    position: ['position', 'job_title', 'jobtitle', 'title', '职位', 'role'],
+    agency: ['agency', 'department', 'dept', 'division', '部门', 'team'],
+    account: ['account', 'username', 'user_name', 'login', '账户', '账号'],
+    password: ['password', 'pwd', 'pass', '密码']
+  };
+
+  function fuzzyMatch(headerName, patterns) {
+    const normalized = headerName.toLowerCase().trim();
+    for (const pattern of patterns) {
+      if (normalized.includes(pattern.toLowerCase()) || pattern.toLowerCase().includes(normalized)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  return {
+    mapFields(headers) {
+      const mapping = {};
+      const suggestions = {};
+
+      // Try to auto-detect each field
+      for (const [fieldName, patterns] of Object.entries(fieldPatterns)) {
+        for (const header of headers) {
+          if (fuzzyMatch(header, patterns)) {
+            mapping[fieldName] = header;
+            suggestions[fieldName] = header;
+            break;
+          }
+        }
+      }
+
+      return {
+        mapping,
+        suggestions,
+        unmappedFields: Object.keys(fieldPatterns).filter(f => !mapping[f]),
+        unmappedColumns: headers.filter(h => !Object.values(mapping).includes(h))
+      };
+    },
+
+    applyMapping(rawData, mapping) {
+      return rawData.map(row => {
+        const standardized = {};
+        for (const [fieldName, columnName] of Object.entries(mapping)) {
+          standardized[fieldName] = row[columnName] || '';
+        }
+        return standardized;
+      });
+    }
+  };
+})();
+</script>
+
+<!-- Module 4: Template Configuration -->
+<script>
+const templateConfig = (() => {
+  let template = {
+    pageSize: 'letter', // 'letter' or 'a4'
+    orientation: 'landscape',
+    cardsPerPage: 8,
+    cardWidthMm: 85.6,
+    cardHeightMm: 54,
+    showQRCode: true,
+    showBarcode: false,
+    marginsMm: 10,
+    bleedArea: true,
+    fields: {
+      name: { x: 10, y: 12, fontSize: 16, weight: 'bold' },
+      employeeId: { x: 10, y: 22, fontSize: 12 },
+      position: { x: 10, y: 32, fontSize: 11 },
+      agency: { x: 10, y: 40, fontSize: 10 }
+    }
+  };
+
+  return {
+    getTemplate() {
+      return JSON.parse(JSON.stringify(template));
+    },
+    
+    updateTemplate(updates) {
+      const nextTemplate = { ...template, ...updates };
+      nextTemplate.cardsPerPage = Math.max(2, Math.min(12, Number(nextTemplate.cardsPerPage) || 8));
+      nextTemplate.marginsMm = Math.max(0, Math.min(20, Number(nextTemplate.marginsMm) || 10));
+      nextTemplate.orientation = nextTemplate.orientation === 'portrait' ? 'portrait' : 'landscape';
+      template = nextTemplate;
+    },
+    
+    resetTemplate() {
+      template = {
+        pageSize: 'letter',
+        orientation: 'landscape',
+        cardsPerPage: 8,
+        cardWidthMm: 85.6,
+        cardHeightMm: 54,
+        showQRCode: true,
+        showBarcode: false,
+        marginsMm: 10,
+        bleedArea: true,
+        fields: {
+          name: { x: 10, y: 12, fontSize: 16, weight: 'bold' },
+          employeeId: { x: 10, y: 22, fontSize: 12 },
+          position: { x: 10, y: 32, fontSize: 11 },
+          agency: { x: 10, y: 40, fontSize: 10 }
+        }
+      };
+    },
+
+    getPageDimensions() {
+      if (template.pageSize === 'a4') {
+        return { widthMm: 210, heightMm: 297 };
+      }
+      return { widthMm: 215.9, heightMm: 279.4 }; // US Letter
+    }
+  };
+})();
+</script>
+
+<!-- Module 5: Storage Manager -->
+<script>
+const storageManager = (() => {
+  const PREFIX = 'badge_tool_';
+  
+  return {
+    save(key, data) {
+      try {
+        localStorage.setItem(PREFIX + key, JSON.stringify(data));
+        return true;
+      } catch (e) {
+        console.error('Storage error:', e);
+        return false;
+      }
+    },
+    
+    load(key) {
+      try {
+        const data = localStorage.getItem(PREFIX + key);
+        return data ? JSON.parse(data) : null;
+      } catch (e) {
+        console.error('Storage error:', e);
+        return null;
+      }
+    },
+    
+    clear(key) {
+      try {
+        localStorage.removeItem(PREFIX + key);
+        return true;
+      } catch (e) {
+        console.error('Storage error:', e);
+        return false;
+      }
+    },
+
+    clearAll() {
+      try {
+        const keys = Object.keys(localStorage);
+        keys.forEach(k => {
+          if (k.startsWith(PREFIX)) localStorage.removeItem(k);
+        });
+        return true;
+      } catch (e) {
+        console.error('Storage error:', e);
+        return false;
+      }
+    }
+  };
+})();
+</script>
+
+<!-- Module 7: QR Code Generator -->
+<script>
+const qrcodeGenerator = (() => {
+  return {
+    generateQRCodeDataUrl(text, size = 200) {
+      return new Promise((resolve, reject) => {
+        try {
+          const container = document.createElement('div');
+          container.style.width = size + 'px';
+          container.style.height = size + 'px';
+          
+          // Create QR code using qrcode.js library
+          const qr = new QRCode(container, {
+            text: text,
+            width: size,
+            height: size,
+            colorDark: '#000000',
+            colorLight: '#FFFFFF',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          // Get the canvas from the generated element
+          setTimeout(() => {
+            const canvas = container.querySelector('canvas');
+            if (canvas) {
+              const dataUrl = canvas.toDataURL('image/png');
+              resolve(dataUrl);
+            } else {
+              reject('Failed to generate QR code');
+            }
+          }, 100);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }
+  };
+})();
+</script>
+
+<!-- Module 8: Badge Renderer -->
+<script>
+const badgeRenderer = (() => {
+  return {
+    async renderBadge(employeeData, templateConfig) {
+      const template = templateConfig.getTemplate();
+      let qrCodeDataUrl = null;
+
+      // Generate QR code if enabled
+      if (template.showQRCode && employeeData.employeeId) {
+        try {
+          qrCodeDataUrl = await qrcodeGenerator.generateQRCodeDataUrl(employeeData.employeeId, 100);
+        } catch (e) {
+          console.warn('QR code generation failed:', e);
+        }
+      }
+
+      // Create badge HTML
+      const badgeColor = '#545e76'; // primary color
+      const badgeHTML = `
+        <div class="badge-card" style="
+          width: ${template.cardWidthMm}mm;
+          height: ${template.cardHeightMm}mm;
+          background: white;
+          border: 1px solid #ddd;
+          display: flex;
+          flex-direction: column;
+          padding: 8px;
+          box-sizing: border-box;
+          position: relative;
+          overflow: hidden;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        ">
+          <!-- Left accent bar -->
+          <div style="
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background-color: ${badgeColor};
+          "></div>
+
+          <!-- Header section -->
+          <div style="
+            padding-left: 6px;
+            padding-right: 4px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 3px;
+          ">
+            <div style="font-size: 7px; font-weight: bold; color: ${badgeColor}; text-transform: uppercase; letter-spacing: 0.5px;">Global Logistics</div>
+            <div style="font-size: 6px; color: #666; margin-top: 1px;">Warehouse Operations</div>
+          </div>
+
+          <!-- Content section -->
+          <div style="
+            display: flex;
+            gap: 6px;
+            flex: 1;
+            align-items: flex-start;
+          ">
+            <!-- Left: Employee info -->
+            <div style="
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              padding-right: 2px;
+            ">
+              <div>
+                <div style="font-size: 6px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 1px;">Employee Name</div>
+                <div style="font-size: 13px; font-weight: bold; color: #000; line-height: 1.2;">${employeeData.name || 'N/A'}</div>
+              </div>
+
+              <div style="font-size: 6px; margin-top: 2px; line-height: 1.4;">
+                <div style="margin-bottom: 2px;">
+                  <span style="color: #999; font-weight: bold; text-transform: uppercase;">ID:</span>
+                  <span style="font-family: monospace; font-weight: bold; color: #000; font-size: 7px;">${employeeData.employeeId || 'N/A'}</span>
+                </div>
+                <div style="margin-bottom: 2px;">
+                  <span style="color: #999; font-weight: bold; text-transform: uppercase;">Position:</span>
+                  <span style="color: #000;">${employeeData.position || 'N/A'}</span>
+                </div>
+                <div>
+                  <span style="color: #999; font-weight: bold; text-transform: uppercase;">Agency:</span>
+                  <span style="color: #000;">${employeeData.agency || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: QR Code -->
+            ${qrCodeDataUrl ? `
+              <div style="
+                width: 38px;
+                height: 38px;
+                border: 1px solid #ddd;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+              ">
+                <img src="${qrCodeDataUrl}" style="width: 100%; height: 100%; object-fit: contain;" alt="QR Code"/>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Footer bar -->
+          <div style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #3c5572;
+          "></div>
+        </div>
+      `;
+
+      return badgeHTML;
+    }
+  };
+})();
+</script>
+
+<!-- Module 9: Batch Paginator -->
+<script>
+const batchPaginator = (() => {
+  return {
+    paginateBadges(employeeData, cardsPerPage, pageSize = 'letter') {
+      if (!Array.isArray(employeeData) || employeeData.length === 0) {
+        return [];
+      }
+
+      const pages = [];
+      const pageCount = Math.ceil(employeeData.length / cardsPerPage);
+
+      for (let i = 0; i < pageCount; i++) {
+        const start = i * cardsPerPage;
+        const end = Math.min(start + cardsPerPage, employeeData.length);
+        const pageEmployees = employeeData.slice(start, end);
+
+        // Fill remaining slots with empty objects
+        while (pageEmployees.length < cardsPerPage) {
+          pageEmployees.push({ isEmpty: true });
+        }
+
+        pages.push({
+          pageNumber: i + 1,
+          employees: pageEmployees,
+          pageSize: pageSize,
+          cardsPerPage: cardsPerPage
+        });
+      }
+
+      return pages;
+    }
+  };
+})();
+</script>
+
+<!-- Module 10: Print Page Builder -->
+<script>
+const printPageBuilder = (() => {
+  return {
+    async buildPrintDocument(pages, templateConfig) {
+      const template = templateConfig.getTemplate();
+      const basePageWidthIn = template.pageSize === 'a4' ? 8.27 : 8.5;
+      const basePageHeightIn = template.pageSize === 'a4' ? 11.69 : 11;
+      const isLandscape = template.orientation === 'landscape';
+      const pageWidthIn = isLandscape ? basePageHeightIn : basePageWidthIn;
+      const pageHeightIn = isLandscape ? basePageWidthIn : basePageHeightIn;
+      const gridCols = 2;
+      const gridRows = Math.ceil(template.cardsPerPage / gridCols);
+
+      let printHTML = `
+        <html>
+        <head>
+          <meta charset="utf-8"/>
+          <title>Badge Print</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            
+            body {
+              font-family: 'Inter', sans-serif;
+              background: #f0f0f0;
+            }
+
+            @page {
+              size: ${template.pageSize} ${template.orientation};
+              margin: 0;
+              padding: 0;
+            }
+
+            .print-page {
+              page-break-after: always;
+              width: ${pageWidthIn}in;
+              height: ${pageHeightIn}in;
+              display: grid;
+              grid-template-columns: repeat(${gridCols}, 1fr);
+              grid-template-rows: repeat(${gridRows}, 1fr);
+              gap: 0;
+              padding: ${template.marginsMm}mm;
+              background: white;
+            }
+
+            .print-page:last-child {
+              page-break-after: auto;
+            }
+
+            .badge-card {
+              page-break-inside: avoid;
+              break-inside: avoid;
+            }
+
+            @media print {
+              body { background: white; }
+              .print-page { page-break-after: always; }
+              @page { margin: 0; }
+            }
+          </style>
+        </head>
+        <body>
+      `;
+
+      // Build each page
+      for (const page of pages) {
+        printHTML += '<div class="print-page">';
+
+        for (const emp of page.employees) {
+          if (emp.isEmpty) {
+            printHTML += '<div class="badge-card" style="background: #f9f9f9;"></div>';
+          } else {
+            const badgeHTML = await badgeRenderer.renderBadge(emp, templateConfig);
+            printHTML += badgeHTML;
+          }
+        }
+
+        printHTML += '</div>';
+      }
+
+      printHTML += `
+        </body>
+        </html>
+      `;
+
+      return printHTML;
+    }
+  };
+})();
+</script>
+
+<!-- Module 11: Print Manager -->
+<script>
+const printManager = (() => {
+  return {
+    async openPrintPreviewMode(employeeData, templateConfig) {
+      try {
+        const template = templateConfig.getTemplate();
+        const pages = batchPaginator.paginateBadges(employeeData, template.cardsPerPage, template.pageSize);
+
+        if (pages.length === 0) {
+          alert('No employees to print');
+          return;
+        }
+
+        const printHTML = await printPageBuilder.buildPrintDocument(pages, templateConfig);
+
+        // Open print-preview mode in a clean page (no controls)
+        const printWindow = window.open('', 'PRINT', 'height=600,width=800');
+        printWindow.document.write(printHTML);
+        printWindow.document.close();
+
+      } catch (error) {
+        console.error('Print error:', error);
+        alert('Error generating print preview: ' + error.message);
+      }
+    },
+
+    async generateAndPrint(employeeData, templateConfig) {
+      await this.openPrintPreviewMode(employeeData, templateConfig);
+    }
+  };
+})();
+</script>
+
+<!-- Module 6: App Orchestrator & Event Handlers -->
+<script>
+const app = (() => {
+  let currentMapping = null;
+  let currentHeaders = null;
+  let currentRawData = [];
+
+  // Initialize app on page load
+  function init() {
+    setupEventListeners();
+    loadStoredSettings();
+    applyTemplateToControls();
+    console.log('Badge Generator initialized');
+  }
+
+  function setupEventListeners() {
+    // File upload
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const downloadTemplateBtn = document.getElementById('download-template');
+    const uploadStatus = document.getElementById('upload-status');
+
+    if (uploadArea && fileInput) {
+      uploadArea.addEventListener('click', () => fileInput.click());
+      
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('bg-primary-container');
+      });
+      
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('bg-primary-container');
+      });
+      
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('bg-primary-container');
+        if (e.dataTransfer.files.length > 0) {
+          handleFileUpload(e.dataTransfer.files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleFileUpload(e.target.files[0]);
+        }
+      });
+    }
+
+    if (downloadTemplateBtn) {
+      downloadTemplateBtn.addEventListener('click', downloadImportTemplate);
+    }
+
+    setupTemplateListeners();
+
+    // Nav button listeners
+    setupNavButtons();
+  }
+
+  function downloadImportTemplate() {
+    const uploadStatus = document.getElementById('upload-status');
+
+    try {
+      const headerRow = ['工号', '姓名', 'Agency', 'Position', '账号', '密码'];
+      const sampleRow = ['10001', 'Chris', 'JDL', 'Picker', 'chris01', 'Temp@123'];
+      const sheet = XLSX.utils.aoa_to_sheet([headerRow, sampleRow]);
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, sheet, 'ImportTemplate');
+      XLSX.writeFile(workbook, 'badge_import_template.xlsx');
+
+      if (uploadStatus) {
+        uploadStatus.textContent = '✓ Template downloaded: badge_import_template.xlsx';
+        uploadStatus.classList.remove('text-error');
+        uploadStatus.classList.add('text-primary');
+      }
+    } catch (error) {
+      console.error('Template download error:', error);
+      if (uploadStatus) {
+        uploadStatus.textContent = `✗ Template download failed: ${error.message || error}`;
+        uploadStatus.classList.remove('text-primary');
+        uploadStatus.classList.add('text-error');
+      }
+    }
+  }
+
+  async function handleFileUpload(file) {
+    const uploadStatus = document.getElementById('upload-status');
+    
+    try {
+      uploadStatus.textContent = 'Parsing...';
+      uploadStatus.classList.add('text-primary');
+      
+      const result = await excelParser.parseFile(file);
+      
+      if (result.success) {
+        currentHeaders = result.headers;
+        currentRawData = result.data;
+        
+        // Auto-detect field mapping
+        const mapResult = fieldMapper.mapFields(result.headers);
+        currentMapping = mapResult.mapping;
+        
+        // Apply mapping to data
+        const standardizedData = fieldMapper.applyMapping(result.data, currentMapping);
+        dataManager.setData(standardizedData);
+        
+        // Update UI
+        uploadStatus.textContent = `✓ Loaded ${result.rowCount} employees`;
+        uploadStatus.classList.remove('text-primary');
+        uploadStatus.classList.add('text-primary');
+        
+        // Keep auto-mapping, but no manual mapping UI in simplified panel
+        updateMappingDropdowns(result.headers, mapResult);
+        
+        // Update employee list
+        updateEmployeeList();
+        updateNewEmployeeCount(result.rowCount);
+        
+        // Store mapping
+        storageManager.save('mapping_v1', currentMapping);
+        
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      uploadStatus.textContent = `✗ Error: ${error.message || error}`;
+      uploadStatus.classList.add('text-error');
+      console.error('Upload error:', error);
+    }
+  }
+
+  function updateMappingDropdowns(headers, mapResult) {
+    // Left panel is simplified; mapping is kept auto-only.
+    console.log('Auto-detected mapping:', mapResult.mapping);
+    console.log('Unmapped fields:', mapResult.unmappedFields);
+  }
+
+  function setupTemplateListeners() {
+    const paperSizeEl = document.getElementById('paper-size');
+    const landscapeBtn = document.getElementById('orientation-landscape');
+    const portraitBtn = document.getElementById('orientation-portrait');
+
+    const applyOrientationButtonState = (orientation) => {
+      if (!landscapeBtn || !portraitBtn) return;
+      if (orientation === 'landscape') {
+        landscapeBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
+        portraitBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
+      } else {
+        portraitBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
+        landscapeBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
+      }
+    };
+
+    const updateTemplateFromControls = (forcedOrientation = null) => {
+      const currentTemplate = templateConfig.getTemplate();
+      const nextOrientation = forcedOrientation || currentTemplate.orientation || 'landscape';
+      templateConfig.updateTemplate({
+        pageSize: paperSizeEl?.value || 'letter',
+        orientation: nextOrientation,
+        cardsPerPage: 8,
+        marginsMm: 10
+      });
+
+      storageManager.save('template_v1', templateConfig.getTemplate());
+      applyOrientationButtonState(nextOrientation);
+      updateBatchSummary();
+    };
+
+    [paperSizeEl].filter(Boolean).forEach((el) => {
+      el.addEventListener('change', updateTemplateFromControls);
+      el.addEventListener('input', updateTemplateFromControls);
+    });
+
+    if (landscapeBtn) {
+      landscapeBtn.addEventListener('click', () => updateTemplateFromControls('landscape'));
+    }
+    if (portraitBtn) {
+      portraitBtn.addEventListener('click', () => updateTemplateFromControls('portrait'));
+    }
+  }
+
+  function applyTemplateToControls() {
+    const template = templateConfig.getTemplate();
+    const paperSizeEl = document.getElementById('paper-size');
+    const landscapeBtn = document.getElementById('orientation-landscape');
+    const portraitBtn = document.getElementById('orientation-portrait');
+
+    if (paperSizeEl) paperSizeEl.value = template.pageSize;
+    if (landscapeBtn && portraitBtn) {
+      if (template.orientation === 'portrait') {
+        portraitBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
+        landscapeBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
+      } else {
+        landscapeBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
+        portraitBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
+      }
+    }
+    updateBatchSummary();
+  }
+
+  function updateNewEmployeeCount(count) {
+    const countEl = document.getElementById('new-employee-count');
+    if (countEl) {
+      countEl.textContent = String(Number(count) || 0);
+    }
+  }
+
+  function updateBatchSummary() {
+    const data = dataManager.getData();
+    const template = templateConfig.getTemplate();
+    const pages = batchPaginator.paginateBadges(data, template.cardsPerPage, template.pageSize);
+    const titleEl = document.querySelector('footer h3');
+    const infoSpans = document.querySelectorAll('footer .flex.items-center.gap-4.text-\[10px\].font-medium.text-outline-variant span');
+    const outputEl = infoSpans.length > 1 ? infoSpans[1] : null;
+
+    if (titleEl) {
+      titleEl.textContent = `Batch Print Preview (${data.length} Badges Selected)`;
+    }
+    if (outputEl) {
+      const outputLabel = template.pageSize === 'a4' ? 'A4 Output' : 'Letter Output';
+      outputEl.innerHTML = `<span class="material-symbols-outlined text-xs" data-icon="print">print</span> ${outputLabel} · ${pages.length} Pages`;
+    }
+  }
+
+  function updateEmployeeList() {
+    const tbody = document.querySelector('tbody');
+    const data = dataManager.getData();
+    
+    if (!tbody || data.length === 0) return;
+
+    tbody.innerHTML = data.map((emp, idx) => `
+      <tr class="hover:bg-surface-container-highest cursor-pointer" data-index="${idx}">
+        <td class="py-3 px-4">
+          <p class="text-xs font-bold text-on-surface">${emp.name || 'N/A'}</p>
+          <p class="text-[10px] text-outline font-mono">ID: ${emp.employeeId || 'N/A'}</p>
+        </td>
+        <td class="py-3 px-4">
+          <span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
+        </td>
+      </tr>
+    `).join('');
+
+    // Add click handlers for row selection
+    tbody.querySelectorAll('tr').forEach((row, idx) => {
+      row.addEventListener('click', () => selectEmployee(idx));
+    });
+
+    updateBatchSummary();
+  }
+
+  function selectEmployee(index) {
+    const emp = dataManager.getEmployee(index);
+    if (!emp) return;
+
+    // Update center preview
+    updateBadgePreview(emp);
+    
+    // Update right panel details
+    updateSelectedDetails(emp);
+    
+    // Highlight selected row
+    document.querySelectorAll('tbody tr').forEach(row => {
+      row.classList.remove('bg-primary/5');
+    });
+    document.querySelectorAll('tbody tr')[index]?.classList.add('bg-primary/5');
+  }
+
+  function updateBadgePreview(employee) {
+    console.log('Preview employee:', employee);
+
+    const previewSection = document.querySelector('section.bg-surface-container-lowest.p-10');
+    if (!previewSection) return;
+
+    badgeRenderer.renderBadge(employee, templateConfig).then(badgeHTML => {
+      previewSection.innerHTML = `
+        ${badgeHTML}
+        <p class="mt-8 text-[11px] text-outline italic">Actual badge dimensions: 85.60 mm x 53.98 mm (ISO/IEC 7810 ID-1)</p>
+      `;
+    }).catch(err => {
+      console.error('Badge rendering error:', err);
+    });
+  }
+
+  function updateSelectedDetails(employee) {
+    // Update right panel with selected employee details
+    const detailsDiv = document.querySelector('.h-40.bg-surface-container-high');
+    if (!detailsDiv) return;
+
+    detailsDiv.innerHTML = `
+      <h3 class="text-[10px] font-bold text-outline-variant uppercase tracking-widest mb-3">Selected Details</h3>
+      <div class="flex gap-4">
+        <div class="w-16 h-16 bg-surface-container-lowest border border-outline-variant/20 flex-shrink-0"></div>
+        <div class="space-y-1">
+          <p class="text-xs font-bold">${employee.name || 'N/A'}</p>
+          <p class="text-[10px] text-on-surface-variant">ID: ${employee.employeeId || 'N/A'}</p>
+          <p class="text-[10px] text-on-surface-variant">Position: ${employee.position || 'N/A'}</p>
+          <button class="mt-2 text-[10px] font-bold text-primary flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs" data-icon="edit">edit</span>
+            EDIT DATA
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function setupNavButtons() {
+    // Load sample data
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+      if (link.textContent.includes('Load Sample')) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          loadSampleData();
+        });
+      }
+      if (link.textContent.includes('Print')) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const data = dataManager.getData();
+          if (data.length === 0) {
+            alert('No employees to print. Please load data first.');
+            return;
+          }
+          printManager.openPrintPreviewMode(data, templateConfig);
+        });
+      }
+    });
+  }
+
+  function loadSampleData() {
+    const sampleData = [
+      { name: 'Marcus Vance', employeeId: 'GLS-99420-TX', position: 'Floor Supervisor', agency: 'Asset Management Division', account: 'mvance', password: 'Secure1!' },
+      { name: 'Elena Rodriguez', employeeId: 'GLS-99421-TX', position: 'Quality Inspector', agency: 'QA Division', account: 'erodriguez', password: 'Secure2!' },
+      { name: 'Chen Wei', employeeId: 'GLS-99422-TX', position: 'Logistics Coordinator', agency: 'Operations', account: 'cwei', password: 'Secure3!' },
+      { name: 'Sarah Jenkins', employeeId: 'GLS-99423-TX', position: 'Warehouse Manager', agency: 'Admin', account: 'sjenkins', password: 'Secure4!' },
+      { name: 'David Miller', employeeId: 'GLS-99424-TX', position: 'Forklift Operator', agency: 'Fleet Ops', account: 'dmiller', password: 'Secure5!' },
+      { name: 'Lisa Wong', employeeId: 'GLS-99425-TX', position: 'Shift Lead', agency: 'Operations', account: 'lwong', password: 'Secure6!' },
+      { name: 'James Adams', employeeId: 'GLS-99426-TX', position: 'Safety Officer', agency: 'Compliance', account: 'jadams', password: 'Secure7!' },
+      { name: 'Maria Garcia', employeeId: 'GLS-99427-TX', position: 'Inventory Specialist', agency: 'Stock Control', account: 'mgarcia', password: 'Secure8!' },
+      { name: 'Robert Brown', employeeId: 'GLS-99428-TX', position: 'Shipping Clerk', agency: 'Dispatch', account: 'rbrown', password: 'Secure9!' },
+      { name: 'Amanda Lee', employeeId: 'GLS-99429-TX', position: 'Training Coordinator', agency: 'HR', account: 'alee', password: 'Secure10!' }
+    ];
+
+    dataManager.setData(sampleData);
+    currentMapping = {
+      name: 'name',
+      employeeId: 'employeeId',
+      position: 'position',
+      agency: 'agency',
+      account: 'account',
+      password: 'password'
+    };
+
+    updateEmployeeList();
+    selectEmployee(0);
+    updateBatchSummary();
+    updateNewEmployeeCount(sampleData.length);
+
+    const uploadStatus = document.getElementById('upload-status');
+    if (uploadStatus) {
+      uploadStatus.textContent = `✓ Loaded 10 sample employees`;
+      uploadStatus.classList.add('text-primary');
+    }
+  }
+
+  function loadStoredSettings() {
+    // Load saved template and mapping
+    const savedMapping = storageManager.load('mapping_v1');
+    if (savedMapping) {
+      currentMapping = savedMapping;
+    }
+
+    const savedTemplate = storageManager.load('template_v1');
+    if (savedTemplate) {
+      templateConfig.updateTemplate(savedTemplate);
+    }
+
+    applyTemplateToControls();
+  }
+
+  return {
+    init
+  };
+})();
+
+// Initialize app when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', app.init);
+} else {
+  app.init();
+}
+</script>
+
+</body></html>
