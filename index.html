@@ -1665,16 +1665,13 @@ const app = (() => {
   }
 
   function loadStoredSettings() {
-    // Load saved template and mapping
+    // Keep rendering deterministic across local previews and GitHub Pages.
+    // Old template cache can distort badge size/layout after deploy.
     const savedMapping = storageManager.load('mapping_v1');
     if (savedMapping) {
       currentMapping = savedMapping;
     }
-
-    const savedTemplate = storageManager.load('template_v1');
-    if (savedTemplate) {
-      templateConfig.updateTemplate(savedTemplate);
-    }
+    storageManager.clear('template_v1');
 
     applyTemplateToControls();
   }
