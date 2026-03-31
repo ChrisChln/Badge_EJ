@@ -987,6 +987,8 @@ const printPageBuilder = (() => {
 <!-- Module 11: Print Manager -->
 <script>
 const printManager = (() => {
+  let previewWindow = null;
+
   return {
     async openPrintPreviewMode(employeeData, templateConfig, options = {}) {
       try {
@@ -1002,18 +1004,29 @@ const printManager = (() => {
         const printHTML = await printPageBuilder.buildPrintDocument(pages, templateConfig);
 
         // Open print-preview mode in a clean page (no controls)
-        const printWindow = window.open('', 'PRINT', 'height=600,width=800');
-        printWindow.document.write(printHTML);
-        printWindow.document.close();
+        previewWindow = window.open('', 'PRINT', 'height=600,width=800');
+        if (!previewWindow) {
+          throw new Error('Unable to open print preview window.');
+        }
+        previewWindow.document.open();
+        previewWindow.document.write(printHTML);
+        previewWindow.document.close();
         if (autoPrint) {
-          printWindow.focus();
-          setTimeout(() => printWindow.print(), 250);
+          previewWindow.focus();
+          setTimeout(() => previewWindow.print(), 250);
         }
 
       } catch (error) {
         console.error('Print error:', error);
         alert('Error generating print preview: ' + error.message);
       }
+    },
+
+    async refreshOpenPreview(employeeData, templateConfig) {
+      if (!previewWindow || previewWindow.closed) {
+        return;
+      }
+      await this.openPrintPreviewMode(employeeData, templateConfig);
     },
 
     async generateAndPrint(employeeData, templateConfig) {
@@ -1067,6 +1080,19 @@ const app = (() => {
   function getMappedDataFromRaw(mapping) {
     const normalized = fieldMapper.applyMapping(currentRawData, mapping);
     return annotateValidation(normalized);
+  }
+
+  function syncRawEmployeeRecord(index, updates) {
+    if (!Array.isArray(currentRawData) || !currentRawData[index] || !currentMapping) {
+      return;
+    }
+
+    const editableFields = ['name', 'employeeId', 'position', 'agency', 'account', 'password'];
+    editableFields.forEach((field) => {
+      const sourceColumn = currentMapping[field];
+      if (!sourceColumn) return;
+      currentRawData[index][sourceColumn] = updates[field] ?? '';
+    });
   }
 
   // Initialize app on page load
@@ -1590,7 +1616,7 @@ const app = (() => {
     modal.classList.remove('flex');
   }
 
-  function saveEditData() {
+  async function saveEditData() {
     if (selectedEmployeeIndex === null) return;
     const updates = {
       name: document.getElementById('edit-name').value.trim(),
@@ -1607,9 +1633,16 @@ const app = (() => {
       alert('Failed to update employee.');
       return;
     }
+    syncRawEmployeeRecord(selectedEmployeeIndex, updates);
     closeEditModal();
     refreshEmployeeTable();
     selectEmployee(selectedEmployeeIndex);
+    try {
+      const printable = dataManager.getData().filter(emp => emp._status !== 'ERROR');
+      await printManager.refreshOpenPreview(printable, templateConfig);
+    } catch (error) {
+      console.error('Print preview refresh error:', error);
+    }
   }
 
   function triggerBadgePrint() {
