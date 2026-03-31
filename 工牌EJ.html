@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Badge Generator | Warehouse Operations</title>
+<title>Badge Generator</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -94,10 +94,9 @@
 <div class="flex items-center gap-8">
 <span class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Badge Generator</span>
 <nav class="hidden md:flex items-center gap-6 font-['Inter'] antialiased text-sm font-medium tracking-tight">
-<a class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Import Excel</a>
-<a class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Load Sample</a>
-<a class="text-slate-900 dark:text-white border-b-2 border-[#545e76] pb-1 active:scale-95 transition-transform" href="#">Print</a>
-<a class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Settings</a>
+<a id="nav-import-excel" class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Import Excel</a>
+<a id="nav-print" class="text-slate-900 dark:text-white border-b-2 border-[#545e76] pb-1 active:scale-95 transition-transform" href="#">Print</a>
+<a id="nav-settings" class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors duration-150 active:scale-95 transition-transform" href="#">Settings</a>
 </nav>
 </div>
 <div class="flex items-center gap-4">
@@ -131,15 +130,9 @@ Download Import Template
 </section>
 <section>
 <h3 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-widest mb-4">Print Setup</h3>
-<div class="grid grid-cols-2 gap-3">
-<button id="orientation-landscape" class="flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="landscape">landscape</span>
-<span class="text-[10px] mt-1">Landscape</span>
-</button>
-<button id="orientation-portrait" class="flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="portrait">portrait</span>
-<span class="text-[10px] mt-1">Portrait</span>
-</button>
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-sm p-3 flex items-center justify-between">
+<span class="text-[10px] font-semibold uppercase tracking-widest text-outline-variant">Orientation</span>
+<span class="text-[11px] font-semibold text-primary">Portrait</span>
 </div>
 <div class="mt-4 flex flex-col gap-1">
 <label class="text-[11px] font-medium text-outline-variant uppercase">Print Size</label>
@@ -148,70 +141,47 @@ Download Import Template
 <option value="letter" selected>US Letter</option>
 </select>
 </div>
+<div class="mt-4 flex flex-col gap-2">
+<label class="text-[11px] font-medium text-outline-variant uppercase">Palette</label>
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<button class="palette-swatch w-6 h-6 rounded-sm border border-outline-variant/20" data-color="#27aae1" style="background:#27aae1" type="button" title="Blue"></button>
+<button class="palette-swatch w-6 h-6 rounded-sm border border-outline-variant/20" data-color="#545e76" style="background:#545e76" type="button" title="Slate"></button>
+<button class="palette-swatch w-6 h-6 rounded-sm border border-outline-variant/20" data-color="#1f9d8b" style="background:#1f9d8b" type="button" title="Teal"></button>
+<button class="palette-swatch w-6 h-6 rounded-sm border border-outline-variant/20" data-color="#d97706" style="background:#d97706" type="button" title="Amber"></button>
+</div>
+<div class="flex items-center gap-2">
+<input id="palette-color" type="color" value="#27aae1" class="w-8 h-8 p-0 border border-outline-variant/20 rounded-sm overflow-hidden appearance-none bg-transparent flex-shrink-0"/>
+<button id="apply-palette" class="h-8 px-3 text-[11px] font-semibold text-primary border border-outline-variant/20 rounded-sm hover:bg-surface-container-low transition-colors whitespace-nowrap" type="button">Apply Color</button>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-col gap-2">
+<label class="text-[11px] font-medium text-outline-variant uppercase">Card Copy</label>
+<input id="copy-title" class="h-8 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm px-2" placeholder="Header title"/>
+<input id="copy-subtitle" class="h-8 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm px-2" placeholder="Header subtitle"/>
+<input id="copy-brand" class="h-8 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm px-2" placeholder="Header right brand"/>
+<div class="grid grid-cols-3 gap-2">
+<input id="copy-label-agency" class="h-8 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm px-2" placeholder="Agency label"/>
+<input id="copy-label-position" class="h-8 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm px-2" placeholder="Position label"/>
+<input id="copy-label-empid" class="h-8 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm px-2" placeholder="Emp ID label"/>
+</div>
+<button id="apply-copy" class="h-8 text-[11px] font-semibold text-primary border border-outline-variant/20 rounded-sm hover:bg-surface-container-low transition-colors" type="button">Apply Copy</button>
+</div>
 </section>
 </aside>
 <!-- Center Panel: Badge Preview -->
 <section class="bg-surface-container-lowest p-10 flex flex-col items-center justify-center border-r border-outline-variant/10">
-<div class="w-full max-w-2xl aspect-[3.375/2.125] bg-white border border-outline-variant/30 flex shadow-sm relative overflow-hidden">
-<!-- Left Accent -->
-<div class="w-4 bg-primary h-full"></div>
-<div class="flex-1 flex flex-col p-6">
-<div class="flex justify-between items-start mb-6">
-<div>
-<h2 class="text-[0.6875rem] font-bold text-primary tracking-widest uppercase">Global Logistics Systems</h2>
-<p class="text-[10px] text-outline font-medium">Internal Operations Hub</p>
+<div class="w-full max-w-5xl aspect-[3/2] bg-white overflow-hidden">
+<img src="./img/Home.jpg" alt="Homepage poster preview" class="w-full h-full object-contain bg-white"/>
 </div>
-<div class="bg-surface-container-low px-2 py-1 rounded-sm text-[10px] font-bold text-on-surface-variant border border-outline-variant/10">
-                            SECURE ACCESS
-                        </div>
-</div>
-<div class="flex gap-6 items-center flex-1">
-<div class="w-32 h-40 bg-surface-container bg-cover bg-center border border-outline-variant/20" data-alt="professional portrait of a warehouse supervisor wearing a high-visibility vest and looking directly at the camera with a neutral expression" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWfaZ0_E6NusxTOgtZyqLCqkFsIK7cveHb421MIQjy-sMWacqMnpz27lvaTNvibJBGIAfwsWYEx01VSx7UexjKIx3JvMSbk7AzdnuE60jf7BFoBWRR3xjpFAa5nlZSDxwJkuuHG3HZwS7MCEfTd0eZsMJSB3-IEXMkqpkux9bZtba0Cq6tPhRTu6HlEfm8_vDrcljR3WdGXh5Eiyay8ioHxwaQsZn0glU8KUgxq0L_RxghwopEB2jEFAeYbEylJXiBj6x254XBwVUp')">
-</div>
-<div class="flex flex-col">
-<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold">Employee Name</span>
-<h1 class="text-2xl font-bold text-on-surface mb-4 leading-none">MARCUS VANCE</h1>
-<div class="grid grid-cols-2 gap-y-3 gap-x-8">
-<div>
-<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">ID Number</span>
-<span class="text-sm font-mono font-bold text-on-surface">GLS-99420-TX</span>
-</div>
-<div>
-<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">Position</span>
-<span class="text-sm font-medium text-on-surface">Floor Supervisor</span>
-</div>
-<div>
-<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">Exp. Date</span>
-<span class="text-sm font-medium text-on-surface">12 / 2026</span>
-</div>
-<div>
-<span class="text-[10px] uppercase tracking-tighter text-outline-variant font-semibold block">Clearance</span>
-<span class="text-sm font-bold text-on-surface">LEVEL 4</span>
-</div>
-</div>
-</div>
-</div>
-<div class="mt-auto flex justify-between items-end">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="inventory">inventory</span>
-<span class="text-[9px] font-bold text-outline-variant uppercase tracking-widest">Asset Management Division</span>
-</div>
-<div class="w-16 h-16 bg-white p-1 border border-outline-variant/20">
-<img alt="QR Code" class="w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzQlBzqJG5BQGXAaAEgoA9dmyA43L6oU-yFrM32xLBfaF4YkUVkcjJ9nW49jueb4z-BJIcLZDC-AlX2oFoaLsQs64InoqEYU4zkXPJD6TcZd-gWUDdfRMBMXvD8FTAlVdWjkMWrJ3LjIqb-7N9HWvEYFaewPMAs1Y8zoM-DgDVAHAdhl6_B71BQmy560lMSvwEEXQxihGsyBlEeY2spB19fvjmz2uYjHZZB76cMgQMx-zKG__ny3ktN4wP51cwiRe_wbrHg3VA3wB"/>
-</div>
-</div>
-</div>
-<!-- Footer Bar -->
-<div class="absolute bottom-0 left-0 w-full h-1 bg-secondary-dim"></div>
-</div>
-<p class="mt-8 text-[11px] text-outline italic">Actual badge dimensions: 85.60 mm x 53.98 mm (ISO/IEC 7810 ID-1)</p>
 </section>
 <!-- Right Panel: Employee Data -->
 <aside class="bg-surface-container-low flex flex-col overflow-hidden">
 <div class="p-4 border-b border-outline-variant/10">
 <div class="relative">
-<span class="material-symbols-outlined absolute left-2 top-2 text-outline text-lg" data-icon="search">search</span>
-<input class="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm focus:ring-primary" placeholder="Search employees..." type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-lg leading-none pointer-events-none" data-icon="search">search</span>
+<input id="search-input" class="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-container-lowest border-outline-variant/20 rounded-sm focus:ring-primary" placeholder="Search employees..." type="text"/>
 </div>
 </div>
 <div class="flex-1 overflow-y-auto ledger-scrollbar">
@@ -223,50 +193,8 @@ Download Import Template
 </tr>
 </thead>
 <tbody class="divide-y divide-outline-variant/5">
-<tr class="bg-primary/5 cursor-pointer">
-<td class="py-3 px-4">
-<p class="text-xs font-bold text-on-surface">Marcus Vance</p>
-<p class="text-[10px] text-outline font-mono">ID: 99420</p>
-</td>
-<td class="py-3 px-4">
-<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-highest cursor-pointer">
-<td class="py-3 px-4">
-<p class="text-xs font-bold text-on-surface">Elena Rodriguez</p>
-<p class="text-[10px] text-outline font-mono">ID: 99421</p>
-</td>
-<td class="py-3 px-4">
-<span class="bg-surface-container-highest text-outline text-[9px] px-1.5 py-0.5 font-bold uppercase">Pending</span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-highest cursor-pointer">
-<td class="py-3 px-4">
-<p class="text-xs font-bold text-on-surface">Chen Wei</p>
-<p class="text-[10px] text-outline font-mono">ID: 99422</p>
-</td>
-<td class="py-3 px-4">
-<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-highest cursor-pointer">
-<td class="py-3 px-4">
-<p class="text-xs font-bold text-on-surface">Sarah Jenkins</p>
-<p class="text-[10px] text-outline font-mono">ID: 99423</p>
-</td>
-<td class="py-3 px-4">
-<span class="bg-error-container/20 text-error text-[9px] px-1.5 py-0.5 font-bold">ERROR</span>
-</td>
-</tr>
-<tr class="hover:bg-surface-container-highest cursor-pointer">
-<td class="py-3 px-4">
-<p class="text-xs font-bold text-on-surface">David Miller</p>
-<p class="text-[10px] text-outline font-mono">ID: 99424</p>
-</td>
-<td class="py-3 px-4">
-<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
-</td>
+<tr>
+<td class="py-3 px-4 text-xs text-outline-variant" colspan="2">No employees found.</td>
 </tr>
 </tbody>
 </table>
@@ -274,66 +202,54 @@ Download Import Template
 <!-- Selected Detail -->
 <div class="h-40 bg-surface-container-high p-4 border-t border-outline-variant/20">
 <h3 class="text-[10px] font-bold text-outline-variant uppercase tracking-widest mb-3">Selected Details</h3>
-<div class="flex gap-4">
-<div class="w-16 h-16 bg-surface-container-lowest border border-outline-variant/20 flex-shrink-0 bg-cover" data-alt="thumbnail portrait of warehouse worker" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXuw6dRaB5lMdaLx2ItgJ5Fi-F0FDgBWyOI_lGEgs_fs7up3wP3uJgHfpe1L_zG5mxXKAzp7OblprZAhMqro5Gsvd9sv6YS19cThHrGSajBPSRZHOgGsgzjCsg4Nmre_WspWt7zvLJD-vv1Vf_bvRw4Kl881_GOt7cOUMthM23Zk1XY2CVITBNvJfMuRSq-u3XcdkjKoQQ8zER3L1Fb7F18I6TvXivyjUTShaRXobCJv-rlcu2UijKgu5jyjmENdPwVG-RJ0wVVpHq')"></div>
-<div class="space-y-1">
-<p class="text-xs font-bold">Marcus Vance</p>
-<p class="text-[10px] text-on-surface-variant">Zone: A-North Dock</p>
-<p class="text-[10px] text-on-surface-variant">Shift: 06:00 - 14:00</p>
-<button class="mt-2 text-[10px] font-bold text-primary flex items-center gap-1">
-<span class="material-symbols-outlined text-xs" data-icon="edit">edit</span>
-                            EDIT DATA
-                        </button>
-</div>
-</div>
+<p class="text-[10px] text-on-surface-variant">No employee selected.</p>
 </div>
 </aside>
 </main>
-<!-- Bottom Section: Batch Print Preview -->
-<footer class="h-44 bg-surface-container-high border-t border-outline-variant/10 flex flex-col p-4">
-<div class="flex justify-between items-center mb-4">
-<h3 class="text-[10px] font-bold text-outline-variant uppercase tracking-widest">Batch Print Preview (10 Badges Selected)</h3>
-<div class="flex items-center gap-4 text-[10px] font-medium text-outline-variant">
-<span>Zoom: 25%</span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs" data-icon="print">print</span> A4 Output</span>
+<div id="edit-modal" class="hidden fixed inset-0 z-[60] bg-black/40 items-center justify-center p-4">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-sm border border-outline-variant/20 p-4 space-y-3">
+<h3 class="text-sm font-bold text-on-surface">Edit Employee</h3>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<label class="text-outline-variant">Name</label><input id="edit-name" class="h-8 text-xs bg-surface border-outline-variant/20 rounded-sm px-2"/>
+<label class="text-outline-variant">Employee ID</label><input id="edit-employeeId" class="h-8 text-xs bg-surface border-outline-variant/20 rounded-sm px-2"/>
+<label class="text-outline-variant">Position</label><input id="edit-position" class="h-8 text-xs bg-surface border-outline-variant/20 rounded-sm px-2"/>
+<label class="text-outline-variant">Agency</label><input id="edit-agency" class="h-8 text-xs bg-surface border-outline-variant/20 rounded-sm px-2"/>
+<label class="text-outline-variant">Account</label><input id="edit-account" class="h-8 text-xs bg-surface border-outline-variant/20 rounded-sm px-2"/>
+<label class="text-outline-variant">Password</label><input id="edit-password" class="h-8 text-xs bg-surface border-outline-variant/20 rounded-sm px-2"/>
+</div>
+<div class="flex justify-end gap-2 pt-2">
+<button id="edit-cancel" type="button" class="h-8 px-3 text-xs font-semibold border border-outline-variant/20 rounded-sm">Cancel</button>
+<button id="edit-save" type="button" class="h-8 px-3 text-xs font-semibold bg-primary text-on-primary rounded-sm">Save</button>
 </div>
 </div>
-<div class="flex-1 flex gap-6 overflow-x-auto pb-2 ledger-scrollbar">
-<!-- Page 1 Preview -->
-<div class="flex flex-col items-center gap-1 shrink-0">
-<div class="w-28 h-40 bg-white shadow-sm border border-outline-variant/30 p-1 grid grid-cols-2 grid-rows-4 gap-1">
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
 </div>
-<span class="text-[9px] font-bold text-primary">Page 1</span>
-</div>
-<!-- Page 2 Preview -->
-<div class="flex flex-col items-center gap-1 shrink-0">
-<div class="w-28 h-40 bg-white shadow-sm border border-outline-variant/30 p-1 grid grid-cols-2 grid-rows-4 gap-1 opacity-60">
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-primary/20 border border-primary/10"></div>
-<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
-<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
-<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
-<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
-<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
-<div class="bg-surface-container border border-outline-variant/10 border-dashed"></div>
-</div>
-<span class="text-[9px] font-bold text-outline-variant">Page 2</span>
-</div>
-</div>
-</footer>
 
 <!-- ==================== CORE APPLICATION MODULES ==================== -->
 
 <!-- Module 1: Data Manager -->
 <script>
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function mirrorPageEmployees(employees, columns = 2) {
+  if (!Array.isArray(employees) || columns <= 1) {
+    return Array.isArray(employees) ? [...employees] : [];
+  }
+
+  const mirrored = [];
+  for (let index = 0; index < employees.length; index += columns) {
+    const row = employees.slice(index, index + columns);
+    mirrored.push(...row.reverse());
+  }
+  return mirrored;
+}
+
 const dataManager = (() => {
   let employeeData = [];
 
@@ -351,6 +267,15 @@ const dataManager = (() => {
     },
     getEmployee(index) {
       return employeeData[index] || null;
+    },
+    updateEmployee(index, updates) {
+      if (!employeeData[index]) return false;
+      employeeData[index] = {
+        ...employeeData[index],
+        ...updates,
+        _index: index
+      };
+      return true;
     },
     getFilteredData(searchTerm) {
       if (!searchTerm) return employeeData;
@@ -483,14 +408,26 @@ const fieldMapper = (() => {
 const templateConfig = (() => {
   let template = {
     pageSize: 'letter', // 'letter' or 'a4'
-    orientation: 'landscape',
+    orientation: 'portrait',
     cardsPerPage: 8,
     cardWidthMm: 85.6,
-    cardHeightMm: 54,
+    cardHeightMm: 40,
     showQRCode: true,
     showBarcode: false,
     marginsMm: 10,
     bleedArea: true,
+    theme: {
+      primaryColor: '#27aae1',
+      textColor: '#1f3550'
+    },
+    copy: {
+      headerTitle: 'JD Outbound',
+      headerSubtitle: 'Employee Work Card',
+      headerBrand: 'JD Logistics',
+      agencyLabel: 'Agency',
+      positionLabel: 'Position',
+      employeeIdLabel: 'Emp ID'
+    },
     fields: {
       name: { x: 10, y: 12, fontSize: 16, weight: 'bold' },
       employeeId: { x: 10, y: 22, fontSize: 12 },
@@ -508,21 +445,47 @@ const templateConfig = (() => {
       const nextTemplate = { ...template, ...updates };
       nextTemplate.cardsPerPage = Math.max(2, Math.min(12, Number(nextTemplate.cardsPerPage) || 8));
       nextTemplate.marginsMm = Math.max(0, Math.min(20, Number(nextTemplate.marginsMm) || 10));
-      nextTemplate.orientation = nextTemplate.orientation === 'portrait' ? 'portrait' : 'landscape';
+      nextTemplate.orientation = 'portrait';
+      const incomingTheme = updates?.theme || {};
+      const incomingCopy = updates?.copy || {};
+      nextTemplate.theme = {
+        primaryColor: incomingTheme.primaryColor || template.theme?.primaryColor || '#27aae1',
+        textColor: incomingTheme.textColor || template.theme?.textColor || '#1f3550'
+      };
+      nextTemplate.copy = {
+        headerTitle: incomingCopy.headerTitle || template.copy?.headerTitle || 'JD Outbound',
+        headerSubtitle: incomingCopy.headerSubtitle || template.copy?.headerSubtitle || 'Employee Work Card',
+        headerBrand: incomingCopy.headerBrand || template.copy?.headerBrand || 'JD Logistics',
+        agencyLabel: incomingCopy.agencyLabel || template.copy?.agencyLabel || 'Agency',
+        positionLabel: incomingCopy.positionLabel || template.copy?.positionLabel || 'Position',
+        employeeIdLabel: incomingCopy.employeeIdLabel || template.copy?.employeeIdLabel || 'Emp ID'
+      };
       template = nextTemplate;
     },
     
     resetTemplate() {
       template = {
         pageSize: 'letter',
-        orientation: 'landscape',
+        orientation: 'portrait',
         cardsPerPage: 8,
         cardWidthMm: 85.6,
-        cardHeightMm: 54,
+        cardHeightMm: 40,
         showQRCode: true,
         showBarcode: false,
         marginsMm: 10,
         bleedArea: true,
+        theme: {
+          primaryColor: '#27aae1',
+          textColor: '#1f3550'
+        },
+        copy: {
+          headerTitle: 'JD Outbound',
+          headerSubtitle: 'Employee Work Card',
+          headerBrand: 'JD Logistics',
+          agencyLabel: 'Agency',
+          positionLabel: 'Position',
+          employeeIdLabel: 'Emp ID'
+        },
         fields: {
           name: { x: 10, y: 12, fontSize: 16, weight: 'bold' },
           employeeId: { x: 10, y: 22, fontSize: 12 },
@@ -637,12 +600,106 @@ const qrcodeGenerator = (() => {
 <!-- Module 8: Badge Renderer -->
 <script>
 const badgeRenderer = (() => {
-  return {
-    async renderBadge(employeeData, templateConfig) {
-      const template = templateConfig.getTemplate();
-      let qrCodeDataUrl = null;
+  function getCardShell(template, innerHtml) {
+    return `
+      <div class="badge-card" style="
+        width: ${template.cardWidthMm}mm;
+        height: ${template.cardHeightMm}mm;
+        background: white;
+        position: relative;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        box-sizing: border-box;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        overflow: hidden;
+      ">
+        ${innerHtml}
+      </div>
+    `;
+  }
 
-      // Generate QR code if enabled
+  return {
+    async renderBadge(employeeData, templateConfig, side = 'front') {
+      const template = templateConfig.getTemplate();
+      const primaryColor = template.theme?.primaryColor || '#545e76';
+      const copy = template.copy || {};
+      const employeeName = escapeHtml(employeeData.name || 'MARCUS VANCE');
+      const employeeId = escapeHtml(employeeData.employeeId || 'GLS-99420-TX');
+      const position = escapeHtml(employeeData.position || 'Floor Supervisor');
+      const agency = escapeHtml(employeeData.agency || 'Asset Management Division');
+      const account = escapeHtml(employeeData.account || employeeData.employeeId || '60180275');
+      const password = escapeHtml(employeeData.password || 'HelloWorld2!');
+      const photoUrl = employeeData._photoUrl || './img/1.png';
+      const headerTitle = escapeHtml(copy.headerTitle || 'GLOBAL LOGISTICS SYSTEMS');
+      const headerSubtitle = escapeHtml(copy.headerSubtitle || 'Internal Operations Hub');
+      const secureText = escapeHtml(copy.headerBrand || 'SECURE ACCESS');
+
+      if (side === 'back') {
+        let accountQrCodeDataUrl = null;
+        let passwordQrCodeDataUrl = null;
+
+        if (template.showQRCode && account) {
+          try {
+            accountQrCodeDataUrl = await qrcodeGenerator.generateQRCodeDataUrl(account, 108);
+          } catch (e) {
+            console.warn('Account QR code generation failed:', e);
+          }
+        }
+
+        if (template.showQRCode && password) {
+          try {
+            passwordQrCodeDataUrl = await qrcodeGenerator.generateQRCodeDataUrl(password, 108);
+          } catch (e) {
+            console.warn('Password QR code generation failed:', e);
+          }
+        }
+
+        return getCardShell(template, `
+          <div style="position:absolute; inset:0; border:1px solid #d8dee8;"></div>
+          <div style="position:absolute; left:0; right:0; bottom:0; height:15px; background:${primaryColor};"></div>
+          <div style="position:relative; height:100%; display:flex; flex-direction:column; padding:12px 16px 10px 16px; box-sizing:border-box;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #d8dee8;">
+              <div>
+                <h2 style="margin:0; font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:${primaryColor};">${headerTitle}</h2>
+                <p style="margin:2px 0 0 0; font-size:10px; color:#6b7280;">${headerSubtitle}</p>
+              </div>
+              <div style="
+                padding: 2px 0;
+                font-size: 10px;
+                font-weight: 700;
+                color: #4b5563;
+                text-transform: uppercase;
+              ">
+                ${secureText}
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; flex:1; align-items:flex-start; padding-top:2px;">
+              <div style="display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0;">
+                <div style="font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:#6b7280; font-weight:600;">Account</div>
+                <div style="font-size:11px; font-weight:700; color:#111827; margin-top:3px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${account}</div>
+                <div style="width:56px; height:56px; margin-top:8px; display:flex; align-items:center; justify-content:center; background:#fff; padding:2px; box-sizing:border-box;">
+                  ${accountQrCodeDataUrl ? `<img src="${accountQrCodeDataUrl}" alt="Account QR Code" style="width:100%; height:100%; object-fit:contain;"/>` : ''}
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0;">
+                <div style="font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:#6b7280; font-weight:600;">Password</div>
+                <div style="font-size:11px; font-weight:700; color:#111827; margin-top:3px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${password}</div>
+                <div style="width:56px; height:56px; margin-top:8px; display:flex; align-items:center; justify-content:center; background:#fff; padding:2px; box-sizing:border-box;">
+                  ${passwordQrCodeDataUrl ? `<img src="${passwordQrCodeDataUrl}" alt="Password QR Code" style="width:100%; height:100%; object-fit:contain;"/>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <div style="position:absolute; left:16px; right:16px; bottom:3px; display:flex; align-items:center; justify-content:space-between; font-size:8px; font-weight:700; color:#ffffff; z-index:1;">
+              <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:55%;">${employeeName}</span>
+              <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:40%;">${employeeId}</span>
+            </div>
+          </div>
+        `);
+      }
+
+      let qrCodeDataUrl = null;
       if (template.showQRCode && employeeData.employeeId) {
         try {
           qrCodeDataUrl = await qrcodeGenerator.generateQRCodeDataUrl(employeeData.employeeId, 100);
@@ -651,111 +708,97 @@ const badgeRenderer = (() => {
         }
       }
 
-      // Create badge HTML
-      const badgeColor = '#545e76'; // primary color
-      const badgeHTML = `
-        <div class="badge-card" style="
-          width: ${template.cardWidthMm}mm;
-          height: ${template.cardHeightMm}mm;
-          background: white;
-          border: 1px solid #ddd;
-          display: flex;
-          flex-direction: column;
-          padding: 8px;
-          box-sizing: border-box;
-          position: relative;
-          overflow: hidden;
-          print-color-adjust: exact;
-          -webkit-print-color-adjust: exact;
-        ">
-          <!-- Left accent bar -->
-          <div style="
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 4px;
-            height: 100%;
-            background-color: ${badgeColor};
-          "></div>
-
-          <!-- Header section -->
-          <div style="
-            padding-left: 6px;
-            padding-right: 4px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 3px;
-          ">
-            <div style="font-size: 7px; font-weight: bold; color: ${badgeColor}; text-transform: uppercase; letter-spacing: 0.5px;">Global Logistics</div>
-            <div style="font-size: 6px; color: #666; margin-top: 1px;">Warehouse Operations</div>
-          </div>
-
-          <!-- Content section -->
-          <div style="
-            display: flex;
-            gap: 6px;
-            flex: 1;
-            align-items: flex-start;
-          ">
-            <!-- Left: Employee info -->
-            <div style="
-              flex: 1;
-              display: flex;
-              flex-direction: column;
-              justify-content: space-between;
-              padding-right: 2px;
-            ">
+      return getCardShell(template, `
+        <div style="height:100%; display:flex; flex-direction:column; box-sizing:border-box;">
+          <div style="position:absolute; inset:0; border:1px solid #d8dee8; pointer-events:none;"></div>
+          <div style="flex:1; display:flex; flex-direction:column; padding:12px 16px 6px 16px; box-sizing:border-box; min-height:0;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
               <div>
-                <div style="font-size: 6px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 1px;">Employee Name</div>
-                <div style="font-size: 13px; font-weight: bold; color: #000; line-height: 1.2;">${employeeData.name || 'N/A'}</div>
+                <h2 style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: ${primaryColor};">${headerTitle}</h2>
+                <p style="margin: 2px 0 0 0; font-size: 10px; color: #6b7280;">${headerSubtitle}</p>
               </div>
-
-              <div style="font-size: 6px; margin-top: 2px; line-height: 1.4;">
-                <div style="margin-bottom: 2px;">
-                  <span style="color: #999; font-weight: bold; text-transform: uppercase;">ID:</span>
-                  <span style="font-family: monospace; font-weight: bold; color: #000; font-size: 7px;">${employeeData.employeeId || 'N/A'}</span>
-                </div>
-                <div style="margin-bottom: 2px;">
-                  <span style="color: #999; font-weight: bold; text-transform: uppercase;">Position:</span>
-                  <span style="color: #000;">${employeeData.position || 'N/A'}</span>
-                </div>
-                <div>
-                  <span style="color: #999; font-weight: bold; text-transform: uppercase;">Agency:</span>
-                  <span style="color: #000;">${employeeData.agency || 'N/A'}</span>
-                </div>
+              <div style="
+                padding: 2px 6px;
+                border-radius: 3px;
+                background-color: transparent;
+                font-size: 10px;
+                font-weight: 700;
+                color: #4b5563;
+                text-transform: uppercase;
+              ">
+                ${secureText}
               </div>
             </div>
 
-            <!-- Right: QR Code -->
-            ${qrCodeDataUrl ? `
+            <div style="display: flex; gap: 12px; flex: 1; align-items: flex-start;">
               <div style="
-                width: 38px;
-                height: 38px;
-                border: 1px solid #ddd;
-                background: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                width: 90px;
+                height: 104px;
+                background-color: transparent;
+                background-image: url('${photoUrl}');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                box-sizing: border-box;
                 flex-shrink: 0;
-              ">
-                <img src="${qrCodeDataUrl}" style="width: 100%; height: 100%; object-fit: contain;" alt="QR Code"/>
+              "></div>
+
+              <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                <span style="
+                  font-size: 9px;
+                  letter-spacing: 0.08em;
+                  text-transform: uppercase;
+                  color: #6b7280;
+                  font-weight: 600;
+                ">Employee Name</span>
+                <h1 style="
+                  margin: 2px 0 8px 0;
+                  font-size: 28px;
+                  line-height: 1.1;
+                  font-weight: 500;
+                  color: #111827;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                ">${employeeName}</h1>
+
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 20px; font-size: 11px;">
+                  <div>
+                    <span style="display:block; font-size: 9px; letter-spacing:0.08em; text-transform:uppercase; color:#6b7280; font-weight:600;">ID</span>
+                    <span style="display:block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-weight:400; color:#111827; margin-top:2px;">${employeeId}</span>
+                  </div>
+                  <div>
+                    <span style="display:block; font-size: 9px; letter-spacing:0.08em; text-transform:uppercase; color:#6b7280; font-weight:600;">Agency</span>
+                    <span style="display:block; font-weight:500; color:#111827; margin-top:2px;">${agency}</span>
+                  </div>
+                  <div style="margin-left:-77px; margin-top:18px;">
+                    <span style="display:block; font-size: 9px; letter-spacing:0.08em; text-transform:uppercase; color:#6b7280; font-weight:600;">Position</span>
+                    <span style="display:block; font-weight:500; color:#111827; margin-top:2px;">${position}</span>
+                  </div>
+                </div>
               </div>
-            ` : ''}
+
+              <div style="margin-left: auto; padding-top: 24px;">
+                ${qrCodeDataUrl ? `
+                  <div style="
+                    width: 52px;
+                    height: 52px;
+                    background-color: #ffffff;
+                    padding: 2px;
+                    box-sizing: border-box;
+                  ">
+                    <img src="${qrCodeDataUrl}" alt="QR Code" style="width:100%; height:100%; object-fit:contain;"/>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
           </div>
-
-          <!-- Footer bar -->
-          <div style="
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #3c5572;
-          "></div>
+          <div style="height:15px; padding:0 16px; background:${primaryColor}; display:flex; align-items:center; justify-content:space-between; box-sizing:border-box; flex-shrink:0;">
+            <span style="font-size:8px; font-weight:700; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:55%;">${employeeName}</span>
+            <span style="font-size:8px; font-weight:700; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:40%;">${employeeId}</span>
+          </div>
         </div>
-      `;
-
-      return badgeHTML;
+      `);
     }
   };
 })();
@@ -828,6 +871,30 @@ const printPageBuilder = (() => {
               background: #f0f0f0;
             }
 
+            .preview-toolbar {
+              position: sticky;
+              top: 0;
+              z-index: 99;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 8px;
+              background: #f0f0f0;
+            }
+
+            .print-hint {
+              font-size: 12px;
+              color: #475467;
+            }
+
+            .print-btn {
+              border: 1px solid #c7d0d4;
+              background: white;
+              padding: 6px 10px;
+              font-size: 12px;
+              cursor: pointer;
+            }
+
             @page {
               size: ${template.pageSize} ${template.orientation};
               margin: 0;
@@ -839,11 +906,18 @@ const printPageBuilder = (() => {
               width: ${pageWidthIn}in;
               height: ${pageHeightIn}in;
               display: grid;
-              grid-template-columns: repeat(${gridCols}, 1fr);
-              grid-template-rows: repeat(${gridRows}, 1fr);
-              gap: 0;
+              grid-template-columns: repeat(${gridCols}, ${template.cardWidthMm}mm);
+              grid-template-rows: repeat(${gridRows}, ${template.cardHeightMm}mm);
+              column-gap: 6mm;
+              row-gap: 6mm;
+              justify-content: center;
+              align-content: start;
               padding: ${template.marginsMm}mm;
               background: white;
+            }
+
+            .print-page.back-page {
+              direction: ltr;
             }
 
             .print-page:last-child {
@@ -853,31 +927,49 @@ const printPageBuilder = (() => {
             .badge-card {
               page-break-inside: avoid;
               break-inside: avoid;
+              justify-self: center;
+              align-self: start;
             }
 
             @media print {
               body { background: white; }
               .print-page { page-break-after: always; }
+              .preview-toolbar { display: none; }
               @page { margin: 0; }
             }
           </style>
         </head>
         <body>
+          <div class="preview-toolbar">
+            <div class="print-hint">Print duplex with flip on long edge for front/back alignment.</div>
+            <button class="print-btn" onclick="window.print()">Print</button>
+          </div>
       `;
 
-      // Build each page
       for (const page of pages) {
+        const frontEmployees = page.employees;
+        const backEmployees = mirrorPageEmployees(page.employees, gridCols);
+
         printHTML += '<div class="print-page">';
-
-        for (const emp of page.employees) {
+        for (const emp of frontEmployees) {
           if (emp.isEmpty) {
-            printHTML += '<div class="badge-card" style="background: #f9f9f9;"></div>';
-          } else {
-            const badgeHTML = await badgeRenderer.renderBadge(emp, templateConfig);
-            printHTML += badgeHTML;
+            printHTML += '<div class="badge-card" style="background:#ffffff;"></div>';
+            continue;
           }
+          const badgeHTML = await badgeRenderer.renderBadge(emp, templateConfig, 'front');
+          printHTML += badgeHTML;
         }
+        printHTML += '</div>';
 
+        printHTML += '<div class="print-page back-page">';
+        for (const emp of backEmployees) {
+          if (emp.isEmpty) {
+            printHTML += '<div class="badge-card" style="background:#ffffff;"></div>';
+            continue;
+          }
+          const badgeHTML = await badgeRenderer.renderBadge(emp, templateConfig, 'back');
+          printHTML += badgeHTML;
+        }
         printHTML += '</div>';
       }
 
@@ -896,8 +988,9 @@ const printPageBuilder = (() => {
 <script>
 const printManager = (() => {
   return {
-    async openPrintPreviewMode(employeeData, templateConfig) {
+    async openPrintPreviewMode(employeeData, templateConfig, options = {}) {
       try {
+        const autoPrint = !!options.autoPrint;
         const template = templateConfig.getTemplate();
         const pages = batchPaginator.paginateBadges(employeeData, template.cardsPerPage, template.pageSize);
 
@@ -912,6 +1005,10 @@ const printManager = (() => {
         const printWindow = window.open('', 'PRINT', 'height=600,width=800');
         printWindow.document.write(printHTML);
         printWindow.document.close();
+        if (autoPrint) {
+          printWindow.focus();
+          setTimeout(() => printWindow.print(), 250);
+        }
 
       } catch (error) {
         console.error('Print error:', error);
@@ -920,7 +1017,7 @@ const printManager = (() => {
     },
 
     async generateAndPrint(employeeData, templateConfig) {
-      await this.openPrintPreviewMode(employeeData, templateConfig);
+      await this.openPrintPreviewMode(employeeData, templateConfig, { autoPrint: true });
     }
   };
 })();
@@ -932,6 +1029,45 @@ const app = (() => {
   let currentMapping = null;
   let currentHeaders = null;
   let currentRawData = [];
+  let selectedEmployeeIndex = null;
+  let currentSearchTerm = '';
+  const photoPool = [
+    './img/1.png',
+    './img/2.png',
+    './img/3.png',
+    './img/4.png',
+    './img/5.png',
+    './img/6.png'
+  ];
+
+  function getRandomPhoto() {
+    return photoPool[Math.floor(Math.random() * photoPool.length)];
+  }
+
+  function getEmployeeStatus(emp) {
+    return getEmployeeErrors(emp).length > 0 ? 'ERROR' : 'READY';
+  }
+
+  function getEmployeeErrors(emp) {
+    const errors = [];
+    if (!emp?.name) errors.push('Missing Name');
+    if (!emp?.employeeId) errors.push('Missing Employee ID');
+    return errors;
+  }
+
+  function annotateValidation(rows) {
+    return rows.map(row => ({
+      ...row,
+      _photoUrl: row._photoUrl || getRandomPhoto(),
+      _errors: getEmployeeErrors(row),
+      _status: getEmployeeStatus(row)
+    }));
+  }
+
+  function getMappedDataFromRaw(mapping) {
+    const normalized = fieldMapper.applyMapping(currentRawData, mapping);
+    return annotateValidation(normalized);
+  }
 
   // Initialize app on page load
   function init() {
@@ -946,6 +1082,12 @@ const app = (() => {
     const uploadArea = document.getElementById('upload-area');
     const fileInput = document.getElementById('file-input');
     const downloadTemplateBtn = document.getElementById('download-template');
+    const searchInput = document.getElementById('search-input');
+    const applyMappingBtn = document.getElementById('apply-mapping');
+    const saveMappingPresetBtn = document.getElementById('save-mapping-preset');
+    const loadMappingPresetBtn = document.getElementById('load-mapping-preset');
+    const editCancelBtn = document.getElementById('edit-cancel');
+    const editSaveBtn = document.getElementById('edit-save');
     const uploadStatus = document.getElementById('upload-status');
 
     if (uploadArea && fileInput) {
@@ -977,6 +1119,27 @@ const app = (() => {
 
     if (downloadTemplateBtn) {
       downloadTemplateBtn.addEventListener('click', downloadImportTemplate);
+    }
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentSearchTerm = (e.target.value || '').trim();
+        refreshEmployeeTable();
+      });
+    }
+    if (applyMappingBtn) {
+      applyMappingBtn.addEventListener('click', applyManualMapping);
+    }
+    if (saveMappingPresetBtn) {
+      saveMappingPresetBtn.addEventListener('click', saveMappingPreset);
+    }
+    if (loadMappingPresetBtn) {
+      loadMappingPresetBtn.addEventListener('click', loadMappingPresetIntoControls);
+    }
+    if (editCancelBtn) {
+      editCancelBtn.addEventListener('click', closeEditModal);
+    }
+    if (editSaveBtn) {
+      editSaveBtn.addEventListener('click', saveEditData);
     }
 
     setupTemplateListeners();
@@ -1027,10 +1190,12 @@ const app = (() => {
         
         // Auto-detect field mapping
         const mapResult = fieldMapper.mapFields(result.headers);
-        currentMapping = mapResult.mapping;
+        const presetMapping = storageManager.load('mapping_preset_v1');
+        const mergedMapping = presetMapping ? { ...mapResult.mapping, ...presetMapping } : mapResult.mapping;
+        currentMapping = mergedMapping;
         
         // Apply mapping to data
-        const standardizedData = fieldMapper.applyMapping(result.data, currentMapping);
+        const standardizedData = annotateValidation(fieldMapper.applyMapping(result.data, mergedMapping));
         dataManager.setData(standardizedData);
         
         // Update UI
@@ -1039,10 +1204,12 @@ const app = (() => {
         uploadStatus.classList.add('text-primary');
         
         // Keep auto-mapping, but no manual mapping UI in simplified panel
-        updateMappingDropdowns(result.headers, mapResult);
+        updateMappingDropdowns(result.headers, { ...mapResult, mapping: mergedMapping });
         
         // Update employee list
-        updateEmployeeList();
+        refreshEmployeeTable();
+        const first = dataManager.getData()[0];
+        if (first) selectEmployee(first._index);
         updateNewEmployeeCount(result.rowCount);
         
         // Store mapping
@@ -1059,39 +1226,114 @@ const app = (() => {
   }
 
   function updateMappingDropdowns(headers, mapResult) {
-    // Left panel is simplified; mapping is kept auto-only.
-    console.log('Auto-detected mapping:', mapResult.mapping);
-    console.log('Unmapped fields:', mapResult.unmappedFields);
+    const mappingSection = document.getElementById('mapping-section');
+    const fields = ['name', 'employeeId', 'position', 'agency', 'account', 'password'];
+    if (mappingSection) mappingSection.classList.remove('hidden');
+
+    fields.forEach((field) => {
+      const select = document.getElementById(`map-${field}`);
+      if (!select) return;
+      const options = [''].concat(headers).map((header) => {
+        const label = header || '-- Unmapped --';
+        return `<option value="${header || ''}">${label}</option>`;
+      }).join('');
+      select.innerHTML = options;
+      select.value = (mapResult.mapping[field] || '');
+    });
+    setMappingStatus('Mapping ready. You can apply or save as preset.');
+  }
+
+  function getMappingFromControls() {
+    const fields = ['name', 'employeeId', 'position', 'agency', 'account', 'password'];
+    const nextMapping = {};
+    fields.forEach((field) => {
+      const select = document.getElementById(`map-${field}`);
+      const value = select?.value?.trim();
+      if (value) nextMapping[field] = value;
+    });
+    return nextMapping;
+  }
+
+  function applyManualMapping() {
+    if (!currentRawData.length || !currentHeaders) {
+      alert('Please upload data first.');
+      return;
+    }
+    currentMapping = getMappingFromControls();
+    const standardizedData = getMappedDataFromRaw(currentMapping);
+    dataManager.setData(standardizedData);
+    storageManager.save('mapping_v1', currentMapping);
+    updateNewEmployeeCount(standardizedData.length);
+    refreshEmployeeTable();
+    const first = dataManager.getData()[0];
+    if (first) selectEmployee(first._index);
+    setMappingStatus('Mapping applied.');
+  }
+
+  function setMappingStatus(message, isError = false) {
+    const statusEl = document.getElementById('mapping-status');
+    if (!statusEl) return;
+    statusEl.textContent = message || '';
+    statusEl.classList.toggle('text-error', isError);
+    statusEl.classList.toggle('text-outline-variant', !isError);
+  }
+
+  function saveMappingPreset() {
+    if (!currentHeaders || !currentHeaders.length) {
+      setMappingStatus('No headers available. Upload data first.', true);
+      return;
+    }
+    const preset = getMappingFromControls();
+    if (Object.keys(preset).length === 0) {
+      setMappingStatus('No mapped fields to save.', true);
+      return;
+    }
+    storageManager.save('mapping_preset_v1', preset);
+    setMappingStatus('Preset saved.');
+  }
+
+  function loadMappingPresetIntoControls() {
+    const preset = storageManager.load('mapping_preset_v1');
+    if (!preset) {
+      setMappingStatus('No saved preset found.', true);
+      return;
+    }
+    const fields = ['name', 'employeeId', 'position', 'agency', 'account', 'password'];
+    fields.forEach((field) => {
+      const select = document.getElementById(`map-${field}`);
+      if (!select) return;
+      const desired = preset[field] || '';
+      const exists = Array.from(select.options).some(opt => opt.value === desired);
+      if (exists) {
+        select.value = desired;
+      }
+    });
+    setMappingStatus('Preset loaded into mapping controls.');
   }
 
   function setupTemplateListeners() {
     const paperSizeEl = document.getElementById('paper-size');
-    const landscapeBtn = document.getElementById('orientation-landscape');
-    const portraitBtn = document.getElementById('orientation-portrait');
+    const paletteColorEl = document.getElementById('palette-color');
+    const applyPaletteBtn = document.getElementById('apply-palette');
+    const swatches = document.querySelectorAll('.palette-swatch');
+    const applyCopyBtn = document.getElementById('apply-copy');
+    const copyTitleEl = document.getElementById('copy-title');
+    const copySubtitleEl = document.getElementById('copy-subtitle');
+    const copyBrandEl = document.getElementById('copy-brand');
+    const copyLabelAgencyEl = document.getElementById('copy-label-agency');
+    const copyLabelPositionEl = document.getElementById('copy-label-position');
+    const copyLabelEmpIdEl = document.getElementById('copy-label-empid');
 
-    const applyOrientationButtonState = (orientation) => {
-      if (!landscapeBtn || !portraitBtn) return;
-      if (orientation === 'landscape') {
-        landscapeBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
-        portraitBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
-      } else {
-        portraitBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
-        landscapeBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
-      }
-    };
-
-    const updateTemplateFromControls = (forcedOrientation = null) => {
+    const updateTemplateFromControls = () => {
       const currentTemplate = templateConfig.getTemplate();
-      const nextOrientation = forcedOrientation || currentTemplate.orientation || 'landscape';
       templateConfig.updateTemplate({
         pageSize: paperSizeEl?.value || 'letter',
-        orientation: nextOrientation,
+        orientation: 'portrait',
         cardsPerPage: 8,
         marginsMm: 10
       });
 
       storageManager.save('template_v1', templateConfig.getTemplate());
-      applyOrientationButtonState(nextOrientation);
       updateBatchSummary();
     };
 
@@ -1100,30 +1342,75 @@ const app = (() => {
       el.addEventListener('input', updateTemplateFromControls);
     });
 
-    if (landscapeBtn) {
-      landscapeBtn.addEventListener('click', () => updateTemplateFromControls('landscape'));
+    if (applyPaletteBtn && paletteColorEl) {
+      applyPaletteBtn.addEventListener('click', () => {
+        const color = paletteColorEl.value || '#27aae1';
+        templateConfig.updateTemplate({
+          theme: {
+            ...templateConfig.getTemplate().theme,
+            primaryColor: color
+          }
+        });
+        storageManager.save('template_v1', templateConfig.getTemplate());
+        if (selectedEmployeeIndex !== null) selectEmployee(selectedEmployeeIndex);
+        updateBatchSummary();
+      });
     }
-    if (portraitBtn) {
-      portraitBtn.addEventListener('click', () => updateTemplateFromControls('portrait'));
+    swatches.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const color = btn.getAttribute('data-color') || '#27aae1';
+        if (paletteColorEl) paletteColorEl.value = color;
+        templateConfig.updateTemplate({
+          theme: {
+            ...templateConfig.getTemplate().theme,
+            primaryColor: color
+          }
+        });
+        storageManager.save('template_v1', templateConfig.getTemplate());
+        if (selectedEmployeeIndex !== null) selectEmployee(selectedEmployeeIndex);
+        updateBatchSummary();
+      });
+    });
+    if (applyCopyBtn) {
+      applyCopyBtn.addEventListener('click', () => {
+        const current = templateConfig.getTemplate();
+        templateConfig.updateTemplate({
+          copy: {
+            ...current.copy,
+            headerTitle: copyTitleEl?.value?.trim() || current.copy?.headerTitle || 'JD Outbound',
+            headerSubtitle: copySubtitleEl?.value?.trim() || current.copy?.headerSubtitle || 'Employee Work Card',
+            headerBrand: copyBrandEl?.value?.trim() || current.copy?.headerBrand || 'JD Logistics',
+            agencyLabel: copyLabelAgencyEl?.value?.trim() || current.copy?.agencyLabel || 'Agency',
+            positionLabel: copyLabelPositionEl?.value?.trim() || current.copy?.positionLabel || 'Position',
+            employeeIdLabel: copyLabelEmpIdEl?.value?.trim() || current.copy?.employeeIdLabel || 'Emp ID'
+          }
+        });
+        storageManager.save('template_v1', templateConfig.getTemplate());
+        if (selectedEmployeeIndex !== null) selectEmployee(selectedEmployeeIndex);
+        updateBatchSummary();
+      });
     }
   }
 
   function applyTemplateToControls() {
     const template = templateConfig.getTemplate();
     const paperSizeEl = document.getElementById('paper-size');
-    const landscapeBtn = document.getElementById('orientation-landscape');
-    const portraitBtn = document.getElementById('orientation-portrait');
+    const paletteColorEl = document.getElementById('palette-color');
+    const copyTitleEl = document.getElementById('copy-title');
+    const copySubtitleEl = document.getElementById('copy-subtitle');
+    const copyBrandEl = document.getElementById('copy-brand');
+    const copyLabelAgencyEl = document.getElementById('copy-label-agency');
+    const copyLabelPositionEl = document.getElementById('copy-label-position');
+    const copyLabelEmpIdEl = document.getElementById('copy-label-empid');
 
     if (paperSizeEl) paperSizeEl.value = template.pageSize;
-    if (landscapeBtn && portraitBtn) {
-      if (template.orientation === 'portrait') {
-        portraitBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
-        landscapeBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
-      } else {
-        landscapeBtn.className = 'flex flex-col items-center p-3 bg-primary text-on-primary rounded-sm';
-        portraitBtn.className = 'flex flex-col items-center p-3 bg-surface-container-lowest border border-outline-variant/20 text-on-surface-variant rounded-sm';
-      }
-    }
+    if (paletteColorEl) paletteColorEl.value = template.theme?.primaryColor || '#27aae1';
+    if (copyTitleEl) copyTitleEl.value = template.copy?.headerTitle || 'JD Outbound';
+    if (copySubtitleEl) copySubtitleEl.value = template.copy?.headerSubtitle || 'Employee Work Card';
+    if (copyBrandEl) copyBrandEl.value = template.copy?.headerBrand || 'JD Logistics';
+    if (copyLabelAgencyEl) copyLabelAgencyEl.value = template.copy?.agencyLabel || 'Agency';
+    if (copyLabelPositionEl) copyLabelPositionEl.value = template.copy?.positionLabel || 'Position';
+    if (copyLabelEmpIdEl) copyLabelEmpIdEl.value = template.copy?.employeeIdLabel || 'Emp ID';
     updateBatchSummary();
   }
 
@@ -1135,51 +1422,65 @@ const app = (() => {
   }
 
   function updateBatchSummary() {
-    const data = dataManager.getData();
-    const template = templateConfig.getTemplate();
-    const pages = batchPaginator.paginateBadges(data, template.cardsPerPage, template.pageSize);
-    const titleEl = document.querySelector('footer h3');
-    const infoSpans = document.querySelectorAll('footer .flex.items-center.gap-4.text-\[10px\].font-medium.text-outline-variant span');
-    const outputEl = infoSpans.length > 1 ? infoSpans[1] : null;
-
-    if (titleEl) {
-      titleEl.textContent = `Batch Print Preview (${data.length} Badges Selected)`;
-    }
-    if (outputEl) {
-      const outputLabel = template.pageSize === 'a4' ? 'A4 Output' : 'Letter Output';
-      outputEl.innerHTML = `<span class="material-symbols-outlined text-xs" data-icon="print">print</span> ${outputLabel} · ${pages.length} Pages`;
-    }
+    return;
   }
 
-  function updateEmployeeList() {
+  function renderBatchPreview(pages) {
+    return;
+  }
+
+  function refreshEmployeeTable() {
+    const filtered = dataManager.getFilteredData(currentSearchTerm);
+    updateEmployeeList(filtered);
+  }
+
+  function updateEmployeeList(listData = null) {
     const tbody = document.querySelector('tbody');
-    const data = dataManager.getData();
+    const data = Array.isArray(listData) ? listData : dataManager.getData();
     
-    if (!tbody || data.length === 0) return;
+    if (!tbody) return;
+    if (!data.length) {
+      selectedEmployeeIndex = null;
+      tbody.innerHTML = '<tr><td class="py-3 px-4 text-xs text-outline-variant" colspan="2">No employees found.</td></tr>';
+      updateBadgePreview(null);
+      updateBatchSummary();
+      return;
+    }
 
     tbody.innerHTML = data.map((emp, idx) => `
-      <tr class="hover:bg-surface-container-highest cursor-pointer" data-index="${idx}">
+      <tr class="hover:bg-surface-container-highest cursor-pointer ${selectedEmployeeIndex === emp._index ? 'bg-primary/5' : ''}" data-index="${emp._index}">
         <td class="py-3 px-4">
           <p class="text-xs font-bold text-on-surface">${emp.name || 'N/A'}</p>
           <p class="text-[10px] text-outline font-mono">ID: ${emp.employeeId || 'N/A'}</p>
         </td>
         <td class="py-3 px-4">
-          <span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>
+          ${emp._status === 'ERROR'
+            ? `<div class="flex flex-col gap-1">
+                <span class="bg-error-container/20 text-error text-[9px] px-1.5 py-0.5 font-bold w-fit">ERROR</span>
+                <span class="text-[9px] text-error">${(emp._errors || []).join(', ')}</span>
+              </div>`
+            : '<span class="bg-primary-container text-on-primary-container text-[9px] px-1.5 py-0.5 font-bold">READY</span>'
+          }
         </td>
       </tr>
     `).join('');
 
     // Add click handlers for row selection
-    tbody.querySelectorAll('tr').forEach((row, idx) => {
-      row.addEventListener('click', () => selectEmployee(idx));
+    tbody.querySelectorAll('tr[data-index]').forEach((row) => {
+      const dataIndex = Number(row.getAttribute('data-index'));
+      row.addEventListener('click', () => selectEmployee(dataIndex));
     });
 
+    if (selectedEmployeeIndex === null && data[0]) {
+      selectEmployee(data[0]._index);
+    }
     updateBatchSummary();
   }
 
   function selectEmployee(index) {
     const emp = dataManager.getEmployee(index);
     if (!emp) return;
+    selectedEmployeeIndex = index;
 
     // Update center preview
     updateBadgePreview(emp);
@@ -1191,22 +1492,48 @@ const app = (() => {
     document.querySelectorAll('tbody tr').forEach(row => {
       row.classList.remove('bg-primary/5');
     });
-    document.querySelectorAll('tbody tr')[index]?.classList.add('bg-primary/5');
+    document.querySelector(`tbody tr[data-index="${index}"]`)?.classList.add('bg-primary/5');
+  }
+
+  function renderPosterPreview() {
+    const previewSection = document.querySelector('section.bg-surface-container-lowest.p-10');
+    if (!previewSection) return;
+    previewSection.innerHTML = `
+      <div class="w-full max-w-5xl aspect-[3/2] bg-white overflow-hidden">
+        <img src="./img/Home.jpg" alt="Homepage poster preview" class="w-full h-full object-contain bg-white"/>
+      </div>
+    `;
   }
 
   function updateBadgePreview(employee) {
-    console.log('Preview employee:', employee);
-
     const previewSection = document.querySelector('section.bg-surface-container-lowest.p-10');
     if (!previewSection) return;
+    if (!employee) {
+      renderPosterPreview();
+      return;
+    }
 
-    badgeRenderer.renderBadge(employee, templateConfig).then(badgeHTML => {
+    const template = templateConfig.getTemplate();
+    Promise.all([
+      badgeRenderer.renderBadge(employee, templateConfig, 'front'),
+      badgeRenderer.renderBadge(employee, templateConfig, 'back')
+    ]).then(([frontBadgeHTML, backBadgeHTML]) => {
       previewSection.innerHTML = `
-        ${badgeHTML}
-        <p class="mt-8 text-[11px] text-outline italic">Actual badge dimensions: 85.60 mm x 53.98 mm (ISO/IEC 7810 ID-1)</p>
+        <div class="w-full max-w-6xl grid grid-cols-2 gap-10 items-start">
+          <div class="flex flex-col items-center gap-3">
+            ${frontBadgeHTML}
+            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-outline-variant">Front</p>
+          </div>
+          <div class="flex flex-col items-center gap-3">
+            ${backBadgeHTML}
+            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-outline-variant">Back</p>
+          </div>
+        </div>
+        <p id="badge-dimension-note" class="mt-8 text-[11px] text-outline italic">Badge dimensions: ${template.cardWidthMm.toFixed(2)} mm x ${template.cardHeightMm.toFixed(2)} mm</p>
       `;
-    }).catch(err => {
+    }).catch((err) => {
       console.error('Badge rendering error:', err);
+      renderPosterPreview();
     });
   }
 
@@ -1214,82 +1541,127 @@ const app = (() => {
     // Update right panel with selected employee details
     const detailsDiv = document.querySelector('.h-40.bg-surface-container-high');
     if (!detailsDiv) return;
+    const photoUrl = employee._photoUrl || './img/1.png';
 
     detailsDiv.innerHTML = `
       <h3 class="text-[10px] font-bold text-outline-variant uppercase tracking-widest mb-3">Selected Details</h3>
       <div class="flex gap-4">
-        <div class="w-16 h-16 bg-surface-container-lowest border border-outline-variant/20 flex-shrink-0"></div>
+        <div class="w-16 h-16 bg-surface-container-lowest border border-outline-variant/20 flex-shrink-0 bg-contain bg-center bg-no-repeat" style="background-image:url('${photoUrl}')"></div>
         <div class="space-y-1">
           <p class="text-xs font-bold">${employee.name || 'N/A'}</p>
           <p class="text-[10px] text-on-surface-variant">ID: ${employee.employeeId || 'N/A'}</p>
           <p class="text-[10px] text-on-surface-variant">Position: ${employee.position || 'N/A'}</p>
-          <button class="mt-2 text-[10px] font-bold text-primary flex items-center gap-1">
+          ${employee._status === 'ERROR'
+            ? `<p class="text-[10px] text-error">Issue: ${(employee._errors || []).join(', ')}</p>`
+            : ''
+          }
+          <button id="edit-selected-btn" class="mt-2 text-[10px] font-bold text-primary flex items-center gap-1">
             <span class="material-symbols-outlined text-xs" data-icon="edit">edit</span>
             EDIT DATA
           </button>
         </div>
       </div>
     `;
+    const editBtn = document.getElementById('edit-selected-btn');
+    if (editBtn) {
+      editBtn.addEventListener('click', openEditModal);
+    }
+  }
+
+  function openEditModal() {
+    const emp = dataManager.getEmployee(selectedEmployeeIndex);
+    if (!emp) return;
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+    document.getElementById('edit-name').value = emp.name || '';
+    document.getElementById('edit-employeeId').value = emp.employeeId || '';
+    document.getElementById('edit-position').value = emp.position || '';
+    document.getElementById('edit-agency').value = emp.agency || '';
+    document.getElementById('edit-account').value = emp.account || '';
+    document.getElementById('edit-password').value = emp.password || '';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function saveEditData() {
+    if (selectedEmployeeIndex === null) return;
+    const updates = {
+      name: document.getElementById('edit-name').value.trim(),
+      employeeId: document.getElementById('edit-employeeId').value.trim(),
+      position: document.getElementById('edit-position').value.trim(),
+      agency: document.getElementById('edit-agency').value.trim(),
+      account: document.getElementById('edit-account').value.trim(),
+      password: document.getElementById('edit-password').value.trim()
+    };
+    updates._errors = getEmployeeErrors(updates);
+    updates._status = getEmployeeStatus(updates);
+    const ok = dataManager.updateEmployee(selectedEmployeeIndex, updates);
+    if (!ok) {
+      alert('Failed to update employee.');
+      return;
+    }
+    closeEditModal();
+    refreshEmployeeTable();
+    selectEmployee(selectedEmployeeIndex);
+  }
+
+  function triggerBadgePrint() {
+    const data = dataManager.getData();
+    if (data.length === 0) {
+      alert('No employees to print. Please load data first.');
+      return;
+    }
+    const printable = data.filter(emp => emp._status !== 'ERROR');
+    if (printable.length === 0) {
+      alert('No valid employees to print. Please fix rows with missing Name or Employee ID.');
+      return;
+    }
+    if (printable.length < data.length) {
+      alert(`${data.length - printable.length} invalid rows were excluded from printing.`);
+    }
+    printManager.openPrintPreviewMode(printable, templateConfig);
   }
 
   function setupNavButtons() {
-    // Load sample data
-    const navLinks = document.querySelectorAll('nav a');
-    navLinks.forEach(link => {
-      if (link.textContent.includes('Load Sample')) {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          loadSampleData();
-        });
-      }
-      if (link.textContent.includes('Print')) {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const data = dataManager.getData();
-          if (data.length === 0) {
-            alert('No employees to print. Please load data first.');
-            return;
-          }
-          printManager.openPrintPreviewMode(data, templateConfig);
-        });
-      }
-    });
-  }
+    const importExcelLink = document.getElementById('nav-import-excel');
+    const printLink = document.getElementById('nav-print');
+    const settingsLink = document.getElementById('nav-settings');
 
-  function loadSampleData() {
-    const sampleData = [
-      { name: 'Marcus Vance', employeeId: 'GLS-99420-TX', position: 'Floor Supervisor', agency: 'Asset Management Division', account: 'mvance', password: 'Secure1!' },
-      { name: 'Elena Rodriguez', employeeId: 'GLS-99421-TX', position: 'Quality Inspector', agency: 'QA Division', account: 'erodriguez', password: 'Secure2!' },
-      { name: 'Chen Wei', employeeId: 'GLS-99422-TX', position: 'Logistics Coordinator', agency: 'Operations', account: 'cwei', password: 'Secure3!' },
-      { name: 'Sarah Jenkins', employeeId: 'GLS-99423-TX', position: 'Warehouse Manager', agency: 'Admin', account: 'sjenkins', password: 'Secure4!' },
-      { name: 'David Miller', employeeId: 'GLS-99424-TX', position: 'Forklift Operator', agency: 'Fleet Ops', account: 'dmiller', password: 'Secure5!' },
-      { name: 'Lisa Wong', employeeId: 'GLS-99425-TX', position: 'Shift Lead', agency: 'Operations', account: 'lwong', password: 'Secure6!' },
-      { name: 'James Adams', employeeId: 'GLS-99426-TX', position: 'Safety Officer', agency: 'Compliance', account: 'jadams', password: 'Secure7!' },
-      { name: 'Maria Garcia', employeeId: 'GLS-99427-TX', position: 'Inventory Specialist', agency: 'Stock Control', account: 'mgarcia', password: 'Secure8!' },
-      { name: 'Robert Brown', employeeId: 'GLS-99428-TX', position: 'Shipping Clerk', agency: 'Dispatch', account: 'rbrown', password: 'Secure9!' },
-      { name: 'Amanda Lee', employeeId: 'GLS-99429-TX', position: 'Training Coordinator', agency: 'HR', account: 'alee', password: 'Secure10!' }
-    ];
-
-    dataManager.setData(sampleData);
-    currentMapping = {
-      name: 'name',
-      employeeId: 'employeeId',
-      position: 'position',
-      agency: 'agency',
-      account: 'account',
-      password: 'password'
-    };
-
-    updateEmployeeList();
-    selectEmployee(0);
-    updateBatchSummary();
-    updateNewEmployeeCount(sampleData.length);
-
-    const uploadStatus = document.getElementById('upload-status');
-    if (uploadStatus) {
-      uploadStatus.textContent = `✓ Loaded 10 sample employees`;
-      uploadStatus.classList.add('text-primary');
+    if (importExcelLink) {
+      importExcelLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('upload-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => document.getElementById('file-input')?.click(), 150);
+      });
     }
+
+    if (printLink) {
+      printLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        triggerBadgePrint();
+      });
+    }
+
+    if (settingsLink) {
+      settingsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('paper-size')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const isPrintShortcut = (e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === 'p';
+      if (!isPrintShortcut) return;
+      e.preventDefault();
+      triggerBadgePrint();
+    });
   }
 
   function loadStoredSettings() {
